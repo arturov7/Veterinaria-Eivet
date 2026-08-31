@@ -1,0 +1,30 @@
+name: proyecto_final_360
+description: "Aplicación móvil Android para clientes de la Veterinaria EIVET."
+publish_to: "none"
+version: 3.0.0+1
+
+environment:
+  sdk: ">=3.9.0 <4.0.0"
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: 6.1.5+1
+  shared_preferences: 2.5.5
+  http: 1.6.0
+  geolocator: 14.0.2
+  flutter_map: 8.3.2
+  latlong2: 0.10.1
+  supabase_flutter: ^2.9.1
+  flutter_secure_storage: ^9.2.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/logo.png
+    

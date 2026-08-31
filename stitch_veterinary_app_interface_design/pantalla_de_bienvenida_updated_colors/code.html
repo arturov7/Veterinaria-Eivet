@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Splash Screen - Petora Haven</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e1e3e1",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#78dc77",
+                        "on-surface-variant": "#3f4a3c",
+                        "background": "#fcfbf7",
+                        "on-primary-fixed-variant": "#005313",
+                        "inverse-on-surface": "#eff1ef",
+                        "surface-bright": "#f8faf8",
+                        "secondary-fixed": "#acf4a4",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#91d78a",
+                        "on-tertiary-container": "#4c3e00",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#003c0b",
+                        "outline": "#6f7a6b",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "primary-fixed": "#94f990",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "on-error": "#ffffff",
+                        "primary": "#06322b",
+                        "tertiary": "#705d00",
+                        "tertiary-container": "#c9a900",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#307231",
+                        "inverse-surface": "#2e3130",
+                        "surface-variant": "#e1e3e1",
+                        "surface": "#ffffff",
+                        "outline-variant": "#becab9",
+                        "on-surface": "#06322b",
+                        "surface-dim": "#d8dad9",
+                        "primary-container": "#4caf50",
+                        "surface-container-high": "#e6e9e7",
+                        "surface-container-low": "#f2f4f2",
+                        "on-background": "#06322b",
+                        "surface-container": "#eceeec",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#0c5216",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#002204",
+                        "surface-tint": "#06322b",
+                        "tertiary-fixed": "#ffe16d",
+                        "secondary": "#2b6657",
+                        "on-secondary-fixed": "#002203",
+                        "primary-fixed-dim": "#78dc77",
+                        "secondary-container": "#acf4a4",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#221b00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "gutter-mobile": "16px",
+                        "stack-sm": "8px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "body-sm": ["Manrope"],
+                        "headline-lg-mobile": ["Manrope"],
+                        "body-lg": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .paw-pattern {
+            background-image: radial-gradient(circle at 50% 50%, rgba(6, 50, 43, 0.05) 0%, rgba(255,255,255,0) 60%),
+                              radial-gradient(circle at 20% 30%, rgba(6, 50, 43, 0.03) 0%, rgba(255,255,255,0) 40%),
+                              radial-gradient(circle at 80% 70%, rgba(6, 50, 43, 0.03) 0%, rgba(255,255,255,0) 40%);
+            background-size: 200px 200px;
+            animation: pulse-bg 8s infinite alternate;
+        }
+        @keyframes pulse-bg {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+        .fade-in-up {
+            animation: fadeInUp 1s ease-out forwards;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-background h-screen w-full flex items-center justify-center overflow-hidden paw-pattern font-body-lg text-primary">
+<!-- Splash Content Canvas -->
+<main class="flex flex-col items-center justify-center w-full max-w-md px-margin-mobile relative z-10 fade-in-up">
+<!-- Logo Container -->
+<div class="relative w-48 h-48 md:w-64 md:h-64 mb-stack-lg rounded-full flex items-center justify-center bg-surface shadow-md">
+<img alt="EIVET Logo" class="w-full h-full object-contain rounded-full" src="https://lh3.googleusercontent.com/aida/AEtjO1W6ewxMzS3aHIULpdF5x499bS1djODlvcHaM0MiQW67-igLKria4pFovQEjWmiX5wJp5kCVePUUn3r8QMKtoZDqukW4FLmRkYARzprQhgFD2wMhLzLcwanHV8ZX006eaBuWi1WszjqYCU-Nvag8IOiE0kazUGshes69hBcJsJI646WSeW6IQArWEpcvASDS1-gLuGIT1roNvEvrDhJPYju7dpGbXhDJP6r7egMlGccew1pRymOmrEZe2gY"/>
+</div>
+<!-- Brand Name -->
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-primary text-center tracking-tight">
+            EIVET
+        </h1>
+<!-- Subtitle/Loading Indicator (Optional aesthetic addition based on design system style) -->
+<div class="mt-stack-md flex items-center gap-2 opacity-80">
+<span class="material-symbols-outlined text-secondary text-sm animate-spin" style="font-variation-settings: 'FILL' 1;">pets</span>
+<p class="text-body-sm font-body-sm text-secondary">Loading clinical records...</p>
+</div>
+</main>
+<!-- Navigation Suppressed (Transactional/Splash Context) -->
+</body></html>

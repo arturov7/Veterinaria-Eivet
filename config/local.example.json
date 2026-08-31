@@ -1,0 +1,5 @@
+{
+  "APP_MODE": "supabase",
+  "SUPABASE_URL": "https://TU_PROYECTO.supabase.co",
+  "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_TU_CLAVE"
+}

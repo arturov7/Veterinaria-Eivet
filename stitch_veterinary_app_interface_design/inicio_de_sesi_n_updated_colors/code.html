@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - Petora Haven</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#e1e3e1",
+                      "on-primary": "#ffffff",
+                      "inverse-primary": "#78dc77",
+                      "on-surface-variant": "#3f4a3c",
+                      "background": "#f8faf8",
+                      "on-primary-fixed-variant": "#005313",
+                      "inverse-on-surface": "#eff1ef",
+                      "surface-bright": "#f8faf8",
+                      "secondary-fixed": "#acf4a4",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed-dim": "#91d78a",
+                      "on-tertiary-container": "#4c3e00",
+                      "on-error-container": "#93000a",
+                      "on-primary-container": "#003c0b",
+                      "outline": "#6f7a6b",
+                      "on-tertiary-fixed-variant": "#544600",
+                      "primary-fixed": "#94f990",
+                      "tertiary-fixed-dim": "#e9c400",
+                      "on-error": "#ffffff",
+                      "primary": "#006e1c",
+                      "tertiary": "#705d00",
+                      "tertiary-container": "#c9a900",
+                      "error": "#ba1a1a",
+                      "on-secondary-container": "#307231",
+                      "inverse-surface": "#2e3130",
+                      "surface-variant": "#e1e3e1",
+                      "surface": "#f8faf8",
+                      "outline-variant": "#becab9",
+                      "on-surface": "#191c1b",
+                      "surface-dim": "#d8dad9",
+                      "primary-container": "#4caf50",
+                      "surface-container-high": "#e6e9e7",
+                      "surface-container-low": "#f2f4f2",
+                      "on-background": "#191c1b",
+                      "surface-container": "#eceeec",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed-variant": "#0c5216",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed": "#002204",
+                      "surface-tint": "#006e1c",
+                      "tertiary-fixed": "#ffe16d",
+                      "secondary": "#2a6b2c",
+                      "on-secondary-fixed": "#002203",
+                      "primary-fixed-dim": "#78dc77",
+                      "secondary-container": "#acf4a4",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-fixed": "#221b00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "24px",
+                      "stack-md": "16px",
+                      "gutter-mobile": "16px",
+                      "stack-sm": "8px",
+                      "margin-mobile": "20px"
+              },
+              "fontFamily": {
+                      "label-md": [
+                              "Manrope"
+                      ],
+                      "headline-lg": [
+                              "Manrope"
+                      ],
+                      "headline-md": [
+                              "Manrope"
+                      ],
+                      "body-sm": [
+                              "Manrope"
+                      ],
+                      "headline-lg-mobile": [
+                              "Manrope"
+                      ],
+                      "body-lg": [
+                              "Manrope"
+                      ]
+              },
+              "fontSize": {
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.5px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center font-body-lg text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Main Container -->
+<main class="w-full max-w-md mx-auto bg-surface sm:shadow-lg sm:rounded-2xl sm:border border-outline-variant overflow-hidden flex flex-col min-h-screen sm:min-h-[800px] relative">
+<!-- Header Section (Top portion of the design, mostly white) -->
+<div class="bg-surface-container-lowest pt-12 pb-8 px-8 flex flex-col items-center justify-center flex-shrink-0 relative z-10 rounded-b-[40px] shadow-sm">
+<!-- Logo Area -->
+<div class="flex flex-col items-center gap-4">
+<div class="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center shadow-sm"><img alt="EIVET Logo" class="w-full h-full object-cover bg-surface-container-lowest" src="https://lh3.googleusercontent.com/aida/AEtjO1W6ewxMzS3aHIULpdF5x499bS1djODlvcHaM0MiQW67-igLKria4pFovQEjWmiX5wJp5kCVePUUn3r8QMKtoZDqukW4FLmRkYARzprQhgFD2wMhLzLcwanHV8ZX006eaBuWi1WszjqYCU-Nvag8IOiE0kazUGshes69hBcJsJI646WSeW6IQArWEpcvASDS1-gLuGIT1roNvEvrDhJPYju7dpGbXhDJP6r7egMlGccew1pRymOmrEZe2gY"/></div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-[#06322b] text-center tracking-tight">PETORA HAVEN</h1>
+</div>
+</div>
+<!-- Content Section -->
+<div class="flex-grow bg-background px-8 pt-12 pb-8 flex flex-col -mt-8 relative z-0">
+<h2 class="font-headline-md text-headline-md text-[#06322b] mb-8 mt-4">Login</h2>
+<!-- Form -->
+<form class="flex flex-col gap-stack-lg flex-grow">
+<!-- Email Input -->
+<div class="flex flex-col gap-1">
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-[#2b6657]/30 rounded-full py-4 px-6 text-on-surface focus:outline-none focus:ring-2 focus:ring-[#2b6657] focus:border-transparent font-body-lg text-body-lg placeholder:text-outline text-center shadow-sm transition-shadow duration-200" id="email" placeholder="Enter your mail id" required="" type="email"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="flex flex-col gap-1">
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-[#2b6657]/30 rounded-full py-4 px-6 pr-12 text-on-surface focus:outline-none focus:ring-2 focus:ring-[#2b6657] focus:border-transparent font-body-lg text-body-lg placeholder:text-outline text-center shadow-sm transition-shadow duration-200" id="password" placeholder="Password" required="" type="password"/>
+<button aria-label="Toggle password visibility" class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-[#2b6657] transition-colors" type="button">
+<span class="material-symbols-outlined">visibility_off</span>
+</button>
+</div>
+<div class="flex justify-end mt-2">
+<a class="text-[#2b6657] hover:text-[#06322b] font-body-sm text-body-sm transition-colors" href="#">Forgot password?</a>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="w-full bg-[#06322b] text-white rounded-full py-4 px-6 font-headline-md text-body-lg font-bold hover:bg-[#06322b]/90 transition-colors active:scale-[0.98] mt-4 shadow-md" type="submit">
+                    Continue
+                </button>
+<!-- Terms Checkbox -->
+<div class="flex items-start gap-3 mt-4 justify-center">
+<div class="flex items-center h-5">
+<input checked="" class="w-4 h-4 rounded border-[#2b6657]/30 text-[#06322b] focus:ring-[#2b6657] bg-surface-container-lowest cursor-pointer" id="terms" required="" type="checkbox"/>
+</div>
+<label class="text-on-surface/90 font-body-sm text-label-md max-w-[250px] text-center" for="terms">
+                        I agree with the <a class="font-bold underline text-[#2b6657] hover:text-[#06322b]" href="#">Term and Condition</a> and <a class="font-bold underline text-[#2b6657] hover:text-[#06322b]" href="#">Privacy Policy</a>.
+                    </label>
+</div>
+<!-- Spacer -->
+<div class="flex-grow"></div>
+<!-- Sign Up Link -->
+<div class="flex items-center justify-center gap-2 mt-8 pb-4">
+<span class="text-on-surface/80 font-body-sm text-body-sm">New here?</span>
+<a class="bg-[#2b6657]/10 text-[#06322b] font-label-md text-label-md px-4 py-2 rounded-full hover:bg-[#2b6657]/20 transition-colors shadow-sm" href="#">Sign here</a>
+</div>
+</form>
+</div>
+</main>
+<script>
+        // Simple password toggle logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.querySelector('button[aria-label="Toggle password visibility"]');
+            const passwordInput = document.getElementById('password');
+            const icon = toggleBtn.querySelector('.material-symbols-outlined');
+
+            toggleBtn.addEventListener('click', () => {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.textContent = 'visibility';
+                } else {
+                    passwordInput.type = 'password';
+                    icon.textContent = 'visibility_off';
+                }
+            });
+        });
+    </script>
+</body></html>

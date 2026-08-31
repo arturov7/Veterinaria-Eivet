@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Petora Haven - Create Pet Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "primary-fixed": "#94f990",
+                "surface-container-high": "#e6e9e7",
+                "on-primary-fixed": "#002204",
+                "background": "#f8faf8",
+                "tertiary-fixed-dim": "#e9c400",
+                "on-error-container": "#93000a",
+                "primary-container": "#4caf50",
+                "on-secondary": "#ffffff",
+                "tertiary": "#705d00",
+                "secondary-container": "#acf4a4",
+                "on-surface": "#191c1b",
+                "surface-tint": "#06322b",
+                "primary": "#06322b",
+                "surface-variant": "#e1e3e1",
+                "surface": "#f8faf8",
+                "on-secondary-fixed-variant": "#0c5216",
+                "surface-dim": "#d8dad9",
+                "on-secondary-container": "#307231",
+                "outline": "#6f7a6b",
+                "on-tertiary-container": "#4c3e00",
+                "on-tertiary-fixed": "#221b00",
+                "secondary-fixed-dim": "#91d78a",
+                "on-primary": "#ffffff",
+                "inverse-surface": "#2e3130",
+                "on-background": "#191c1b",
+                "inverse-primary": "#78dc77",
+                "on-secondary-fixed": "#002203",
+                "on-primary-container": "#003c0b",
+                "outline-variant": "#becab9",
+                "surface-container-highest": "#e1e3e1",
+                "on-primary-fixed-variant": "#005313",
+                "primary-fixed-dim": "#78dc77",
+                "surface-container": "#eceeec",
+                "surface-container-low": "#f2f4f2",
+                "surface-bright": "#f8faf8",
+                "on-surface-variant": "#3f4a3c",
+                "tertiary-fixed": "#ffe16d",
+                "surface-container-lowest": "#ffffff",
+                "secondary": "#2a6b2c",
+                "error-container": "#ffdad6",
+                "on-tertiary": "#ffffff",
+                "secondary-fixed": "#acf4a4",
+                "error": "#ba1a1a",
+                "on-tertiary-fixed-variant": "#544600",
+                "inverse-on-surface": "#eff1ef",
+                "tertiary-container": "#c9a900",
+                "on-error": "#ffffff"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "stack-md": "16px",
+                "stack-lg": "24px",
+                "stack-sm": "8px",
+                "margin-mobile": "20px",
+                "gutter-mobile": "16px"
+        },
+        "fontFamily": {
+                "headline-lg-mobile": [
+                        "Manrope"
+                ],
+                "body-sm": [
+                        "Manrope"
+                ],
+                "headline-lg": [
+                        "Manrope"
+                ],
+                "headline-md": [
+                        "Manrope"
+                ],
+                "label-md": [
+                        "Manrope"
+                ],
+                "body-lg": [
+                        "Manrope"
+                ]
+        },
+        "fontSize": {
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-sm": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-md": [
+                        "20px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-md": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.5px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-lg": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-[80px]">
+<!-- Top Navigation (Transactional, no shell nav for focused task) -->
+<header class="flex items-center p-margin-mobile bg-surface sticky top-0 z-10">
+<button aria-label="Go back" class="p-2 -ml-2 text-on-surface hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<h1 class="flex-1 text-center font-headline-md text-headline-md text-on-surface mr-6">Añadir Mascota</h1>
+</header>
+<main class="px-margin-mobile py-stack-md max-w-lg mx-auto w-full space-y-stack-lg">
+<!-- Photo Upload Placeholder -->
+<div class="flex flex-col items-center justify-center">
+<div class="relative w-32 h-32 bg-surface-container-low rounded-full flex items-center justify-center border-2 border-dashed border-outline hover:border-primary transition-colors cursor-pointer group shadow-sm overflow-hidden">
+<img alt="EIVET Logo" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXyfDa2V4HtdjcXUIGruDcpjaWlb7wXqWQSDBL50t0pGvqXNmLUNnHc8krVlXW0nAyJvX2mnWKbMSJoeR6g_oJV5DV-taXCuR_zZkEZaWpLnvaEe14Ehr8Rz_2g8wNmm6TMKo30mqvoMPKCiPhIPERopEvNnnADbtxfkP-_za-NmaP_Ay5X14sb0jMjJmLOTDWhAI-55VvSD6g-CvWEGd4SMmRvc21hmdbbOf3Iuw_MtOvgWbTrS4H"/>
+</div>
+<p class="mt-stack-sm text-body-sm font-body-sm text-on-surface-variant text-center">Añadir foto de perfil</p>
+</div>
+<!-- Form Fields -->
+<form class="space-y-stack-md bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-surface-variant">
+<!-- Nombre de la mascota -->
+<div class="space-y-stack-sm">
+<label class="block font-label-md text-label-md text-on-surface" for="petName">Nombre de la mascota</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined">pets</span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-lg bg-surface-container-low focus:ring-primary focus:border-primary text-body-lg font-body-lg text-on-surface transition-colors" id="petName" name="petName" placeholder="Ej. Max" required="" type="text"/>
+</div>
+</div>
+<!-- Especie (Dog/Cat selector) -->
+<div class="space-y-stack-sm">
+<label class="block font-label-md text-label-md text-on-surface">Especie</label>
+<div class="grid grid-cols-2 gap-4">
+<!-- Dog Option -->
+<label class="relative cursor-pointer">
+<input checked="" class="peer sr-only" name="species" type="radio" value="dog"/>
+<div class="flex items-center justify-center gap-2 p-3 rounded-lg border border-outline-variant bg-surface-container-low peer-checked:bg-primary peer-checked:border-primary peer-checked:text-on-primary transition-all hover:bg-surface-variant text-on-surface-variant">
+<span class="material-symbols-outlined fill">qr_code_2</span>
+<span class="font-label-md text-label-md">Perro</span>
+</div>
+</label>
+<!-- Cat Option -->
+<label class="relative cursor-pointer">
+<input class="peer sr-only" name="species" type="radio" value="cat"/>
+<div class="flex items-center justify-center gap-2 p-3 rounded-lg border border-outline-variant bg-surface-container-low peer-checked:bg-primary peer-checked:border-primary peer-checked:text-on-primary transition-all hover:bg-surface-variant text-on-surface-variant">
+<span class="material-symbols-outlined fill">cruelty_free</span> <!-- Using an alternative icon as cat isn't standard in MS yet, cruelty_free is often used for pets -->
+<span class="font-label-md text-label-md">Gato</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Raza -->
+<div class="space-y-stack-sm">
+<label class="block font-label-md text-label-md text-on-surface" for="breed">Raza</label>
+<div class="relative">
+<select class="block w-full pl-3 pr-10 py-3 border border-outline-variant rounded-lg bg-surface-container-low focus:ring-primary focus:border-primary text-body-lg font-body-lg text-on-surface appearance-none transition-colors" id="breed" name="breed">
+<option disabled="" selected="" value="">Selecciona una raza</option>
+<option value="golden_retriever">Golden Retriever</option>
+<option value="labrador">Labrador</option>
+<option value="bulldog">Bulldog</option>
+<option value="mixed">Mestizo</option>
+<option value="other">Otra</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-on-surface-variant">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Género -->
+<div class="space-y-stack-sm">
+<label class="block font-label-md text-label-md text-on-surface">Género</label>
+<div class="grid grid-cols-2 gap-4">
+<label class="relative cursor-pointer">
+<input checked="" class="peer sr-only" name="gender" type="radio" value="male"/>
+<div class="text-center p-3 rounded-lg border border-outline-variant bg-surface-container-low peer-checked:bg-primary peer-checked:border-primary peer-checked:text-on-primary transition-all hover:bg-surface-variant text-on-surface-variant font-label-md text-label-md">
+                            Macho
+                        </div>
+</label>
+<label class="relative cursor-pointer">
+<input class="peer sr-only" name="gender" type="radio" value="female"/>
+<div class="text-center p-3 rounded-lg border border-outline-variant bg-surface-container-low peer-checked:bg-primary peer-checked:border-primary peer-checked:text-on-primary transition-all hover:bg-surface-variant text-on-surface-variant font-label-md text-label-md">
+                            Hembra
+                        </div>
+</label>
+</div>
+</div>
+<!-- Fecha de nacimiento -->
+<div class="space-y-stack-sm">
+<label class="block font-label-md text-label-md text-on-surface" for="dob">Fecha de nacimiento</label>
+<div class="flex gap-2">
+<div class="relative w-1/3">
+<select class="block w-full pl-3 pr-8 py-3 border border-outline-variant rounded-lg bg-surface-container-low focus:ring-primary focus:border-primary text-body-lg font-body-lg text-on-surface appearance-none" id="dob_day">
+<option disabled="" selected="" value="">Día</option>
+<option value="1">01</option>
+<option value="2">02</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+<div class="relative w-1/3">
+<select class="block w-full pl-3 pr-8 py-3 border border-outline-variant rounded-lg bg-surface-container-low focus:ring-primary focus:border-primary text-body-lg font-body-lg text-on-surface appearance-none" id="dob_month">
+<option disabled="" selected="" value="">Mes</option>
+<option value="1">Ene</option>
+<option value="2">Feb</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+<div class="relative w-1/3">
+<select class="block w-full pl-3 pr-8 py-3 border border-outline-variant rounded-lg bg-surface-container-low focus:ring-primary focus:border-primary text-body-lg font-body-lg text-on-surface appearance-none" id="dob_year">
+<option disabled="" selected="" value="">Año</option>
+<option value="2023">2023</option>
+<option value="2022">2022</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary Action -->
+<div class="pt-stack-md">
+<button class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-4 rounded-full font-label-md text-label-md hover:opacity-90 hover:shadow-md transition-all" type="submit">
+<span class="material-symbols-outlined text-xl">save</span>
+                    Guardar mascota
+                </button>
+</div>
+</form>
+</main>
+</body></html>
