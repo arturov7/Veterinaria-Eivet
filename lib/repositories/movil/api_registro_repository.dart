@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../models/pet_api_mapper.dart';
-import '../models/registro.dart';
+import '../../models/movil/pet_api_mapper.dart';
+import '../../models/movil/registro.dart';
 import 'registro_repository.dart';
 
 /// Lectura REST para clientes: GET /mascotas.
@@ -32,6 +32,18 @@ class ApiRegistroRepository implements RegistroRepository {
         .map(PetApiMapper.fromApi)
         .toList(growable: false);
   }
+
+  @override
+  Future<void> create(Registro pet) =>
+      throw UnsupportedError('La API REST de clientes es de solo lectura.');
+
+  @override
+  Future<void> update(Registro pet) =>
+      throw UnsupportedError('La API REST de clientes es de solo lectura.');
+
+  @override
+  Future<void> delete(String id) =>
+      throw UnsupportedError('La API REST de clientes es de solo lectura.');
 
   Map<String, String> get _headers => const <String, String>{
     'Accept': 'application/json',

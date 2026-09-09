@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 
-import '../models/context_snapshot.dart';
-import '../models/weather_snapshot.dart';
-import '../services/location_service.dart';
-import '../services/weather_service.dart';
+import '../../models/movil/context_snapshot.dart';
+import '../../models/movil/weather_snapshot.dart';
+import '../../services/movil/location_service.dart';
+import '../../services/movil/weather_service.dart';
 
 enum ContextStatus { idle, loadingLocation, loadingApi, ready, error }
 

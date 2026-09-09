@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../services/auth_service.dart';
+import '../../services/movil/auth_service.dart';
 import 'home_screen.dart';
 import 'register_screen.dart';
 

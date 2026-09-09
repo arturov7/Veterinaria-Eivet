@@ -1,4 +1,4 @@
-import '../models/appointment_request.dart';
+import '../../models/movil/appointment_request.dart';
 import 'appointment_repository.dart';
 
 class DemoAppointmentRepository implements AppointmentRepository {

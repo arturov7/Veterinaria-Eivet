@@ -5,19 +5,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
-import 'config/app_config.dart';
-import 'controllers/context_controller.dart';
-import 'controllers/preferences_controller.dart';
-import 'repositories/appointment_repository.dart';
-import 'repositories/demo_appointment_repository.dart';
-import 'repositories/demo_registro_repository.dart';
-import 'repositories/registro_repository.dart';
-import 'repositories/veterinary_catalog_repository.dart';
-import 'repositories/supabase_appointment_repository.dart';
-import 'repositories/supabase_registro_repository.dart';
-import 'services/location_service.dart';
-import 'services/preferences_service.dart';
-import 'services/weather_service.dart';
+import 'core/utils/app_config.dart';
+import 'controllers/movil/context_controller.dart';
+import 'controllers/movil/preferences_controller.dart';
+import 'repositories/movil/appointment_repository.dart';
+import 'repositories/movil/demo_appointment_repository.dart';
+import 'repositories/movil/demo_registro_repository.dart';
+import 'repositories/movil/registro_repository.dart';
+import 'repositories/movil/veterinary_catalog_repository.dart';
+import 'repositories/movil/supabase_appointment_repository.dart';
+import 'repositories/movil/supabase_registro_repository.dart';
+import 'services/movil/location_service.dart';
+import 'services/movil/preferences_service.dart';
+import 'services/movil/weather_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

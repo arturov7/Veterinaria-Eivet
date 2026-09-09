@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../controllers/preferences_controller.dart';
-import '../models/veterinary_content.dart';
-import '../repositories/veterinary_catalog_repository.dart';
+import '../../controllers/movil/preferences_controller.dart';
+import '../../models/movil/veterinary_content.dart';
+import '../../repositories/movil/veterinary_catalog_repository.dart';
 import 'appointments_screen.dart';
 import 'pet_care_screen.dart';
 import 'records_screen.dart';

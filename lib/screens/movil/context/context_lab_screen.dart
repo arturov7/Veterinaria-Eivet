@@ -3,9 +3,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/context_controller.dart';
-import '../../models/context_snapshot.dart';
-import '../../widgets/context_card.dart';
+import '../../../controllers/movil/context_controller.dart';
+import '../../../models/movil/context_snapshot.dart';
+import '../../../widgets/movil/context_card.dart';
 
 class ContextLabScreen extends StatelessWidget {
   const ContextLabScreen({super.key});

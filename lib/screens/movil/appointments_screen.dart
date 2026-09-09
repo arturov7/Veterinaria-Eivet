@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/appointment_request.dart';
-import '../models/registro.dart';
-import '../repositories/appointment_repository.dart';
-import '../repositories/registro_repository.dart';
+import '../../models/movil/appointment_request.dart';
+import '../../models/movil/registro.dart';
+import '../../repositories/movil/appointment_repository.dart';
+import '../../repositories/movil/registro_repository.dart';
 import 'appointment_form_screen.dart';
 
 class AppointmentsScreen extends StatefulWidget {

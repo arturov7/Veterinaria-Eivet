@@ -1,5 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/registro.dart'; import 'registro_repository.dart';
+import '../../models/movil/registro.dart'; import 'registro_repository.dart';
 class SupabaseRegistroRepository implements RegistroRepository {
   final _client = Supabase.instance.client;
 

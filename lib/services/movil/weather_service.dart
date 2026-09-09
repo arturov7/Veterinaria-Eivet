@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../models/weather_snapshot.dart';
+import '../../models/movil/weather_snapshot.dart';
 
 class WeatherService {
   const WeatherService();

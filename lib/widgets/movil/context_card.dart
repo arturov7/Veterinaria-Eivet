@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/context_snapshot.dart';
+import '../../models/movil/context_snapshot.dart';
 
 class ContextCard extends StatelessWidget {
   const ContextCard({super.key, required this.snapshot});

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'controllers/preferences_controller.dart';
-import 'screens/home_screen.dart';
-import 'screens/login_screen.dart';
-import 'services/auth_service.dart';
-import 'config/app_config.dart';
-import 'theme/app_theme.dart';
+import 'controllers/movil/preferences_controller.dart';
+import 'screens/movil/home_screen.dart';
+import 'screens/movil/login_screen.dart';
+import 'services/movil/auth_service.dart';
+import 'core/utils/app_config.dart';
+import 'core/movil/app_theme.dart';
 
 class ProyectoFinalApp extends StatelessWidget {
   const ProyectoFinalApp({super.key});

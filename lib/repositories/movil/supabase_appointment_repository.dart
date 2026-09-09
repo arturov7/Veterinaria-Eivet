@@ -1,3 +1,3 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/appointment_request.dart'; import 'appointment_repository.dart';
+import '../../models/movil/appointment_request.dart'; import 'appointment_repository.dart';
 class SupabaseAppointmentRepository implements AppointmentRepository { final _client=Supabase.instance.client; @override Future<List<AppointmentRequest>> fetchAll() async { final rows=await _client.from('citas').select('*, mascotas(nombre)').order('fecha_hora'); return (rows as List).map((r)=>AppointmentRequest.fromJson(Map<String,dynamic>.from(r as Map))).toList(); } @override Future<void> create(AppointmentRequest r)=>_client.from('citas').insert(r.toJson()); @override Future<void> update(AppointmentRequest r)=>_client.from('citas').update(r.toJson()).eq('id',r.id!); @override Future<void> delete(String id)=>_client.from('citas').update({'estado':'Cancelada'}).eq('id',id); }

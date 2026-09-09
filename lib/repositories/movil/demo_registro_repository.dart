@@ -1,4 +1,4 @@
-import '../models/registro.dart';
+import '../../models/movil/registro.dart';
 import 'registro_repository.dart';
 
 class DemoRegistroRepository implements RegistroRepository {

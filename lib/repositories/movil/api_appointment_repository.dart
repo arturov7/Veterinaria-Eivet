@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../models/appointment_request.dart';
+import '../../models/movil/appointment_request.dart';
 import 'appointment_repository.dart';
 
 /// Contrato REST previsto para NestJS: /solicitudes-citas.

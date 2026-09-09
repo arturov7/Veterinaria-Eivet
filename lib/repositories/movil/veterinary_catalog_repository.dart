@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/veterinary_content.dart';
+import '../../models/movil/veterinary_content.dart';
 
 class VeterinaryCatalogRepository {
   const VeterinaryCatalogRepository();

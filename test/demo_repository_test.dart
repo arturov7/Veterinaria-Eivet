@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:proyecto_final_360/models/pet_api_mapper.dart';
-import 'package:proyecto_final_360/models/pet_details.dart';
-import 'package:proyecto_final_360/models/appointment_request.dart';
-import 'package:proyecto_final_360/repositories/demo_appointment_repository.dart';
-import 'package:proyecto_final_360/repositories/demo_registro_repository.dart';
+import 'package:proyecto_final_360/models/movil/pet_api_mapper.dart';
+import 'package:proyecto_final_360/models/movil/pet_details.dart';
+import 'package:proyecto_final_360/models/movil/appointment_request.dart';
+import 'package:proyecto_final_360/repositories/movil/demo_appointment_repository.dart';
+import 'package:proyecto_final_360/repositories/movil/demo_registro_repository.dart';
 
 void main() {
   test('modo demo muestra fichas de mascotas', () async {

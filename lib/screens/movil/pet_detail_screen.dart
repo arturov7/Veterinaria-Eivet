@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../models/registro.dart';
+import '../../models/movil/registro.dart';
 
 class PetDetailScreen extends StatefulWidget {
   const PetDetailScreen({super.key, required this.pet});

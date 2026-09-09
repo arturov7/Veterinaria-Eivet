@@ -1,4 +1,4 @@
-import '../models/registro.dart';
+import '../../models/movil/registro.dart';
 
 abstract class RegistroRepository {
   Future<List<Registro>> fetchAll();

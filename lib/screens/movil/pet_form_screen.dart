@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/registro.dart';
-import '../repositories/registro_repository.dart';
+import '../../models/movil/registro.dart';
+import '../../repositories/movil/registro_repository.dart';
 
 class PetFormScreen extends StatefulWidget {
   const PetFormScreen({super.key, this.initial});

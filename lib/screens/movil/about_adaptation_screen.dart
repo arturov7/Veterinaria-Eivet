@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../repositories/veterinary_catalog_repository.dart';
+import '../../repositories/movil/veterinary_catalog_repository.dart';
 
 class AboutAdaptationScreen extends StatelessWidget {
   const AboutAdaptationScreen({super.key});

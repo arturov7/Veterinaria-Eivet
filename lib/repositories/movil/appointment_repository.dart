@@ -1,4 +1,4 @@
-import '../models/appointment_request.dart';
+import '../../models/movil/appointment_request.dart';
 
 abstract class AppointmentRepository {
   Future<List<AppointmentRequest>> fetchAll();

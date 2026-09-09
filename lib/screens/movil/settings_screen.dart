@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../config/app_config.dart';
-import '../controllers/preferences_controller.dart';
-import '../services/auth_service.dart';
+import '../../core/utils/app_config.dart';
+import '../../controllers/movil/preferences_controller.dart';
+import '../../services/movil/auth_service.dart';
 import 'about_adaptation_screen.dart';
 import 'login_screen.dart';
 

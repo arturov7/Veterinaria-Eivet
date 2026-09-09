@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:proyecto_final_360/models/weather_snapshot.dart';
+import 'package:proyecto_final_360/models/movil/weather_snapshot.dart';
 
 void main() {
   test('convierte JSON de Open-Meteo', () {

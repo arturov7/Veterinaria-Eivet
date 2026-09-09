@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../controllers/preferences_controller.dart';
-import '../config/app_config.dart';
+import '../../controllers/movil/preferences_controller.dart';
+import '../../core/utils/app_config.dart';
 import 'login_screen.dart';
 import 'home_screen.dart';
 
