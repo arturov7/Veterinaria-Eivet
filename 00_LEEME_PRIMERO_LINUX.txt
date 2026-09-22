@@ -1,4 +1,4 @@
-LINUX / MX LINUX - SESION 2
+ÑLINUX / MX LINUX - SESION 2
 
 1) Descomprime dentro de tu HOME.
 2) chmod +x scripts/*.sh

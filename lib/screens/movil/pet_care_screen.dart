@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
+
+import '../../repositories/movil/pet_care_repository.dart';
 
 class PetCareScreen extends StatefulWidget {
   const PetCareScreen({super.key, this.embedded = false});
@@ -28,48 +30,42 @@ class _PetCareScreenState extends State<PetCareScreen> {
       _error = null;
     });
     try {
-      final client = Supabase.instance.client;
-      final results = await Future.wait<dynamic>([
-        client
-            .from('vacunas')
-            .select('nombre, fecha_aplicacion, proxima_dosis, estado, mascotas(nombre)')
-            .order('proxima_dosis'),
-        client
-            .from('historiales_clinicos')
-            .select('fecha, motivo, diagnostico, tratamiento, receta, indicaciones, proximo_control, mascotas(nombre)')
-            .order('fecha', ascending: false),
-      ]);
+      final snapshot = await context.read<PetCareRepository>().fetch();
       if (mounted) {
         setState(() {
-          _vaccines = _rows(results[0]);
-          _treatments = _rows(results[1]);
+          _vaccines = snapshot.vaccines;
+          _treatments = snapshot.treatments;
         });
       }
     } catch (_) {
       if (mounted) {
-        setState(() => _error = 'No se pudieron cargar los cuidados de tus mascotas.');
+        setState(
+          () => _error = 'No se pudieron cargar los cuidados de tus mascotas.',
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
-  List<Map<String, dynamic>> _rows(dynamic response) => (response as List)
-      .map((row) => Map<String, dynamic>.from(row as Map))
-      .toList();
-
   @override
   Widget build(BuildContext context) {
     final content = _body();
     if (!widget.embedded) {
-      return Scaffold(appBar: AppBar(title: const Text('Cuidados y seguimiento')), body: content);
+      return Scaffold(
+        appBar: AppBar(title: const Text('Cuidados y seguimiento')),
+        body: content,
+      );
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
           padding: EdgeInsets.fromLTRB(20, 20, 20, 4),
-          child: Text('Cuidados y seguimiento', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800)),
+          child: Text(
+            'Cuidados y seguimiento',
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+          ),
         ),
         const Padding(
           padding: EdgeInsets.fromLTRB(20, 0, 20, 8),
@@ -98,25 +94,39 @@ class _PetCareScreenState extends State<PetCareScreen> {
         children: [
           _ReminderCard(vaccines: _vaccines, treatments: _treatments),
           const SizedBox(height: 22),
-          const _SectionTitle(icon: Icons.vaccines_outlined, title: 'Próximas vacunas'),
+          const _SectionTitle(
+            icon: Icons.vaccines_outlined,
+            title: 'Próximas vacunas',
+          ),
           const SizedBox(height: 10),
           if (_vaccines.isEmpty)
-            const _EmptyMessage(message: 'No hay vacunas registradas para tus mascotas.')
+            const _EmptyMessage(
+              message: 'No hay vacunas registradas para tus mascotas.',
+            )
           else
-            ..._vaccines.map((vaccine) => Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: _VaccineCard(item: vaccine),
-                )),
+            ..._vaccines.map(
+              (vaccine) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: _VaccineCard(item: vaccine),
+              ),
+            ),
           const SizedBox(height: 16),
-          const _SectionTitle(icon: Icons.medical_information_outlined, title: 'Tratamientos e indicaciones'),
+          const _SectionTitle(
+            icon: Icons.medical_information_outlined,
+            title: 'Tratamientos e indicaciones',
+          ),
           const SizedBox(height: 10),
           if (_treatments.isEmpty)
-            const _EmptyMessage(message: 'No hay tratamientos autorizados para mostrar.')
+            const _EmptyMessage(
+              message: 'No hay tratamientos autorizados para mostrar.',
+            )
           else
-            ..._treatments.map((treatment) => Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: _TreatmentCard(item: treatment),
-                )),
+            ..._treatments.map(
+              (treatment) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: _TreatmentCard(item: treatment),
+              ),
+            ),
         ],
       ),
     );
@@ -150,7 +160,10 @@ class _ReminderCard extends StatelessWidget {
         children: [
           const CircleAvatar(
             backgroundColor: Color(0xFF06322B),
-            child: Icon(Icons.notifications_active_outlined, color: Colors.white),
+            child: Icon(
+              Icons.notifications_active_outlined,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -172,12 +185,15 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        children: [
-          Icon(icon, color: const Color(0xFF006E1C)),
-          const SizedBox(width: 8),
-          Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
-        ],
-      );
+    children: [
+      Icon(icon, color: const Color(0xFF006E1C)),
+      const SizedBox(width: 8),
+      Text(
+        title,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+      ),
+    ],
+  );
 }
 
 class _VaccineCard extends StatelessWidget {
@@ -191,8 +207,13 @@ class _VaccineCard extends StatelessWidget {
       elevation: 0,
       child: ListTile(
         leading: const CircleAvatar(child: Icon(Icons.vaccines_outlined)),
-        title: Text(item['nombre']?.toString() ?? 'Vacuna', style: const TextStyle(fontWeight: FontWeight.w800)),
-        subtitle: Text('$pet\nPróxima dosis: ${_formatDate(item['proxima_dosis'])}\nEstado: ${item['estado'] ?? 'Pendiente'}'),
+        title: Text(
+          item['nombre']?.toString() ?? 'Vacuna',
+          style: const TextStyle(fontWeight: FontWeight.w800),
+        ),
+        subtitle: Text(
+          '$pet\nPróxima dosis: ${_formatDate(item['proxima_dosis'])}\nEstado: ${item['estado'] ?? 'Pendiente'}',
+        ),
         isThreeLine: true,
       ),
     );
@@ -214,25 +235,43 @@ class _TreatmentCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              const CircleAvatar(child: Icon(Icons.medical_information_outlined)),
-              const SizedBox(width: 10),
-              Expanded(child: Text(_petName(item), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800))),
-            ]),
+            Row(
+              children: [
+                const CircleAvatar(
+                  child: Icon(Icons.medical_information_outlined),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    _petName(item),
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             if ((item['motivo']?.toString().isNotEmpty ?? false)) ...[
               const SizedBox(height: 12),
               Text('Motivo: ${item['motivo']}'),
             ],
             if (treatment?.isNotEmpty ?? false) ...[
               const SizedBox(height: 6),
-              Text('Tratamiento: $treatment', style: const TextStyle(fontWeight: FontWeight.w700)),
+              Text(
+                'Tratamiento: $treatment',
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
             ],
             if (instructions?.isNotEmpty ?? false) ...[
               const SizedBox(height: 6),
               Text('Indicaciones: $instructions'),
             ],
             const SizedBox(height: 10),
-            Text('Próximo control: ${_formatDate(item['proximo_control'])}', style: const TextStyle(color: Color(0xFF47745E))),
+            Text(
+              'Próximo control: ${_formatDate(item['proximo_control'])}',
+              style: const TextStyle(color: Color(0xFF47745E)),
+            ),
           ],
         ),
       ),
@@ -246,9 +285,9 @@ class _EmptyMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 18),
-        child: Center(child: Text(message, textAlign: TextAlign.center)),
-      );
+    padding: const EdgeInsets.symmetric(vertical: 18),
+    child: Center(child: Text(message, textAlign: TextAlign.center)),
+  );
 }
 
 String _petName(Map<String, dynamic> item) {

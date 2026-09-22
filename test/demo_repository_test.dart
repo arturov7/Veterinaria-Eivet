@@ -3,6 +3,7 @@ import 'package:proyecto_final_360/models/movil/pet_api_mapper.dart';
 import 'package:proyecto_final_360/models/movil/pet_details.dart';
 import 'package:proyecto_final_360/models/movil/appointment_request.dart';
 import 'package:proyecto_final_360/repositories/movil/demo_appointment_repository.dart';
+import 'package:proyecto_final_360/repositories/movil/demo_pet_care_repository.dart';
 import 'package:proyecto_final_360/repositories/movil/demo_registro_repository.dart';
 
 void main() {
@@ -63,5 +64,14 @@ void main() {
     expect((await repository.fetchAll()).single.reason, 'Control y vacunas');
     await repository.delete(created.id!);
     expect(await repository.fetchAll(), isEmpty);
+  });
+
+  test('modo demo ofrece cuidados sin requerir Supabase', () async {
+    const repository = DemoPetCareRepository();
+
+    final care = await repository.fetch(petId: 'demo-1');
+
+    expect(care.vaccines, isNotEmpty);
+    expect(care.treatments, isNotEmpty);
   });
 }

@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary-fixed": "#002111", "surface-container-high": "#dce9ff", "outline": "#717974", "primary-container": "#0f382a", "error-container": "#ffdad6", "on-surface": "#0b1c30", "on-secondary": "#ffffff", "surface-tint": "#3f6656", "tertiary-container": "#402f00", "tertiary-fixed-dim": "#ecc15a", "secondary-container": "#93f3bb", "on-tertiary": "#ffffff", "surface": "#f8f9ff", "secondary-fixed-dim": "#7adaa3", "surface-container-lowest": "#ffffff", "inverse-surface": "#213145", "on-primary": "#ffffff", "on-error": "#ffffff", "on-background": "#0b1c30", "on-secondary-fixed-variant": "#005231", "surface-dim": "#cbdbf5", "surface-container-low": "#eff4ff", "on-tertiary-fixed": "#251a00", "on-primary-container": "#79a28f", "error": "#ba1a1a", "on-tertiary-container": "#bb9432", "primary-fixed": "#c1ecd7", "surface-container": "#e5eeff", "inverse-on-surface": "#eaf1ff", "primary": "#002217", "surface-container-highest": "#d3e4fe", "inverse-primary": "#a5d0bc", "secondary-fixed": "#96f6bd", "tertiary-fixed": "#ffdf99", "primary-fixed-dim": "#a5d0bc", "on-tertiary-fixed-variant": "#5a4300", "tertiary": "#261b00", "secondary": "#006d42", "on-primary-fixed-variant": "#274e3f", "on-surface-variant": "#414844", "outline-variant": "#c1c8c3", "on-error-container": "#93000a", "background": "#f8f9ff", "surface-bright": "#f8f9ff", "surface-variant": "#d3e4fe", "on-primary-fixed": "#002116", "on-secondary-container": "#007146" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-md": "1rem", "space-xl": "2rem", "space-sm": "0.5rem", "margin-mobile": "1rem", "space-lg": "1.5rem", "margin": "2rem", "gutter": "1.5rem", "gutter-mobile": "0.75rem", "space-xs": "0.25rem" }, "fontFamily": { "body-md": [ "Inter" ], "headline-md": [ "Plus Jakarta Sans" ], "headline-sm": [ "Plus Jakarta Sans" ], "title-md": [ "Plus Jakarta Sans" ], "label-lg": [ "Inter" ], "headline-lg": [ "Plus Jakarta Sans" ], "code-data": [ "Inter" ], "headline-lg-mobile": [ "Plus Jakarta Sans" ], "body-lg": [ "Inter" ], "label-md": [ "Inter" ], "body-sm": [ "Inter" ], "display": [ "Plus Jakarta Sans" ], "label-sm": [ "Inter" ] }, "fontSize": { "body-md": [ "14px", { "lineHeight": "20px", "fontWeight": "400" } ], "headline-md": [ "22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "headline-sm": [ "18px", { "lineHeight": "24px", "fontWeight": "600" } ], "title-md": [ "16px", { "lineHeight": "22px", "fontWeight": "600" } ], "label-lg": [ "14px", { "lineHeight": "18px", "fontWeight": "600" } ], "headline-lg": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "700" } ], "code-data": [ "12px", { "lineHeight": "16px", "fontWeight": "500" } ], "headline-lg-mobile": [ "24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "body-lg": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ], "label-md": [ "12px", { "lineHeight": "16px", "fontWeight": "500" } ], "body-sm": [ "12px", { "lineHeight": "16px", "fontWeight": "400" } ], "display": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "label-sm": [ "11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-72 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between select-none"><div class="flex flex-col"><div class="p-space-lg flex items-center gap-space-sm"><div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-sm flex-shrink-0"><span class="material-symbols-outlined text-secondary-container">pets</span></div><div class="flex flex-col min-w-0"><span class="font-title-md text-title-md text-primary truncate leading-tight">Veterinaria EIVET</span><div class="flex items-center gap-1 mt-0.5"><span class="inline-block w-1.5 h-1.5 rounded-full bg-secondary"></span><span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold truncate">Panel Veterinario / Admin</span></div></div></div><div class="px-space-md py-space-xs"><div class="bg-surface-container-low px-space-md py-space-xs rounded-lg flex items-center justify-between"><span class="font-code-data text-code-data text-on-surface-variant font-medium">Especialidad Oncológica</span><span class="font-code-data text-code-data bg-tertiary-fixed text-on-tertiary-fixed font-semibold px-1.5 py-0.5 rounded">ACTIVO</span></div></div><nav class="flex flex-col gap-1 px-space-md mt-space-md overflow-y-auto" data-active-classes="bg-primary-container text-on-primary font-semibold shadow-sm"><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">space_dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="citas-veterinarias" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">calendar_month</span><span class="font-label-lg text-label-lg">Citas Veterinarias</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="propietarios" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">person_pin</span><span class="font-label-lg text-label-lg">Propietarios</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg transition-all group bg-primary-container text-on-primary font-semibold shadow-sm" data-path="mascotas" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">sound_detection_dog_barking</span><span class="font-label-lg text-label-lg">Mascotas</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="consultas-historial" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">clinical_notes</span><span class="font-label-lg text-label-lg">Consultas e Historial</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="vacunas-tratamientos" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">vaccines</span><span class="font-label-lg text-label-lg">Vacunas y Tratamientos</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="configuracion-seguridad" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-primary transition-colors">encrypted</span><span class="font-label-lg text-label-lg">Configuración / Seguridad</span></a></nav></div><div class="p-space-md bg-surface-container-low"><div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-[0_1px_4px_rgba(0,0,0,0.03)] flex flex-col gap-space-sm"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-full bg-primary-container text-secondary-container flex items-center justify-center font-title-md text-title-md flex-shrink-0">CM</div><div class="flex flex-col min-w-0 flex-1"><span class="font-label-md text-label-md text-on-surface font-semibold truncate">Dr. Carlos Mendoza</span><span class="font-label-sm text-label-sm text-on-surface-variant truncate">Oncólogo Veterinario</span></div></div><div class="flex items-center justify-between pt-space-xs border-t border-surface-container-high"><span class="font-label-sm text-label-sm bg-secondary-container text-on-secondary-fixed-variant px-2 py-0.5 rounded font-medium flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">verified_user</span>Supabase Auth</span><a class="font-label-sm text-label-sm text-error hover:text-on-error-container transition-colors flex items-center gap-0.5 font-medium" href="#" title="Cerrar Sesión"><span class="material-symbols-outlined text-[16px]">logout</span><span>Salir</span></a></div></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 px-space-lg flex items-center justify-between gap-space-md"><div class="flex-1 max-w-xl"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-3 text-outline pointer-events-none text-[20px]">search</span><input class="w-full h-10 pl-10 pr-space-md rounded-lg bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-secondary/30 transition-all shadow-[0_1px_2px_rgba(15,56,42,0.04)]" placeholder="Buscar mascota, propietario, CI o ficha médica..." type="search"/></div></div><div class="flex items-center gap-space-md flex-shrink-0"><div class="hidden xl:flex items-center gap-2 bg-surface-container-low px-space-md py-1.5 rounded-lg text-on-surface-variant font-code-data text-code-data"><span class="material-symbols-outlined text-[16px] text-secondary">schedule</span><span>Turno Activo: Quirófano • 08:30 - 18:00</span></div><button aria-label="Notificaciones y Alertas" class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-error rounded-full ring-2 ring-surface"></span></button><button class="flex items-center gap-2 bg-primary hover:bg-primary-container text-on-primary px-space-md py-2 rounded-lg font-label-lg text-label-lg transition-all shadow-[0_1px_3px_rgba(15,56,42,0.12)]" type="button"><span class="material-symbols-outlined text-[18px]">add</span><span>Nueva Consulta</span></button><div class="flex items-center gap-space-sm pl-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover shadow-sm ring-1 ring-surface-container-high" src="https://lh3.googleusercontent.com/aida/AEtjO1WsjaNLTuxZH4rbhgyrMp-mMfmbCDFXD257d5HJAmFFSFlyyIhjtMLD_92g36rJick2JmHSIM3zBaEyH0EXzfTaDJUm_TxX934OT9KI82XDNLS5uNI_kgsF2GEnnxHXECMgh6mOm6EZI8YTYLxb6WugaqFsBIVQZJEW75G-1aQw7dIX9Yx3OyzKby2yZfM6UvKgiCnSNh6mP_zuGyas--49kIV-DJI-57-QaZXhl0dd0XhyWQ3bg9K-uuJ5xKiQs-83bwDpAUsyyQM"/><div class="hidden md:flex flex-col text-left leading-none"><span class="font-label-md text-label-md text-on-surface font-semibold">EIVET Admin</span><span class="font-label-sm text-label-sm text-secondary font-medium">Online</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-screen px-space-lg py-space-lg"><div class="flex flex-col w-full gap-space-lg">
+<!-- TOP HEADER / ACTION BAR -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
+<div class="flex flex-col gap-1 max-w-2xl">
+<div class="flex items-center gap-2">
+<span class="font-code-data text-code-data uppercase tracking-wider text-secondary font-semibold bg-secondary-container/40 px-2 py-0.5 rounded">Expediente Clínico Digital</span>
+<span class="text-outline-variant">•</span>
+<span class="font-code-data text-code-data text-on-surface-variant font-medium">842 Pacientes Registrados</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Gestión de Mascotas y Pacientes</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Registro integral, atenciones históricas, seguimiento oncológico y datos clínicos de animales atendidos en la red EIVET.</p>
+</div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<button class="flex items-center gap-2 bg-surface-container-low hover:bg-surface-container text-primary font-label-lg text-label-lg px-space-md py-2.5 rounded-lg transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span>Exportar Reporte</span>
+</button>
+<button class="flex items-center gap-2 bg-secondary hover:bg-on-secondary-fixed-variant text-on-secondary font-label-lg text-label-lg px-space-lg py-2.5 rounded-lg shadow-sm transition-all" id="btn-open-new-pet" type="button">
+<span class="material-symbols-outlined text-[20px]">sound_detection_dog_barking</span>
+<span>+ Registrar Nueva Mascota</span>
+</button>
+</div>
+</section>
+<!-- CLINICAL SUMMARY METRICS -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Activos en Terapia</span>
+<span class="font-headline-md text-headline-md text-primary mt-1">128</span>
+<span class="font-code-data text-code-data text-secondary flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>+12% este mes
+        </span>
+</div>
+<div class="w-12 h-12 rounded-xl bg-secondary-container/40 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[26px]">vital_signs</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Monitoreo Oncológico</span>
+<span class="font-headline-md text-headline-md text-primary mt-1">46</span>
+<span class="font-code-data text-code-data text-tertiary-container bg-tertiary-fixed/60 px-1.5 py-0.5 rounded font-semibold w-max mt-0.5">Prioridad Alta</span>
+</div>
+<div class="w-12 h-12 rounded-xl bg-tertiary-fixed/50 text-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[26px]">medical_services</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Vacunación Pendiente</span>
+<span class="font-headline-md text-headline-md text-primary mt-1">19</span>
+<span class="font-code-data text-code-data text-error flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">notification_important</span>Vencen &lt; 7 días
+        </span>
+</div>
+<div class="w-12 h-12 rounded-xl bg-error-container/60 text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-[26px]">vaccines</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Pacientes de Alta</span>
+<span class="font-headline-md text-headline-md text-primary mt-1">668</span>
+<span class="font-code-data text-code-data text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">done_all</span>Controles anuales
+        </span>
+</div>
+<div class="w-12 h-12 rounded-xl bg-surface-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[26px]">verified</span>
+</div>
+</div>
+</section>
+<!-- SEARCH & CLINICAL ADVANCED FILTERS -->
+<section class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-space-sm">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+<input class="w-full h-11 pl-10 pr-4 bg-surface-container-low text-on-surface placeholder:text-outline font-body-md text-body-md rounded-lg focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-secondary/30 transition-all" id="patient-search-input" placeholder="Buscar por nombre de mascota, número de microchip, raza o dueño..." type="search"/>
+</div>
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1 lg:pb-0">
+<!-- Especie -->
+<div class="relative flex-shrink-0">
+<select class="appearance-none h-11 pl-3 pr-8 bg-surface-container-low text-on-surface font-label-md text-label-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30 cursor-pointer" id="filter-species">
+<option value="all">Especie: Todas</option>
+<option value="canine">Canino</option>
+<option value="feline">Felino</option>
+<option value="exotic">Exótico / Silvestre</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline text-[18px] pointer-events-none">expand_more</span>
+</div>
+<!-- Sexo -->
+<div class="relative flex-shrink-0">
+<select class="appearance-none h-11 pl-3 pr-8 bg-surface-container-low text-on-surface font-label-md text-label-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30 cursor-pointer" id="filter-sex">
+<option value="all">Sexo: Todos</option>
+<option value="male">Macho</option>
+<option value="female">Hembra</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline text-[18px] pointer-events-none">expand_more</span>
+</div>
+<!-- Estado Clínico -->
+<div class="relative flex-shrink-0">
+<select class="appearance-none h-11 pl-3 pr-8 bg-surface-container-low text-on-surface font-label-md text-label-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30 cursor-pointer" id="filter-status">
+<option value="all">Estado: Todos</option>
+<option value="active">Activo / Control</option>
+<option value="treatment">En Tratamiento</option>
+<option value="discharged">Alta Médica</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline text-[18px] pointer-events-none">expand_more</span>
+</div>
+<!-- Ordenar -->
+<div class="relative flex-shrink-0">
+<select class="appearance-none h-11 pl-3 pr-8 bg-surface-container-low text-on-surface font-label-md text-label-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30 cursor-pointer" id="sort-order">
+<option value="recent">Ordenar: Última atención</option>
+<option value="name">Ordenar: Nombre (A-Z)</option>
+<option value="age">Ordenar: Edad</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline text-[18px] pointer-events-none">sort</span>
+</div>
+<button class="h-11 px-3 bg-surface-container-low text-on-surface-variant hover:text-error hover:bg-error-container/30 rounded-lg font-label-md text-label-md flex items-center gap-1 transition-colors flex-shrink-0" id="btn-clear-filters" title="Restablecer filtros" type="button">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+<span class="hidden sm:inline">Limpiar</span>
+</button>
+</div>
+</div>
+<!-- Active filter chips -->
+<div class="flex items-center gap-2 flex-wrap text-on-surface-variant font-code-data text-code-data">
+<span class="text-outline font-medium">Mostrando 4 de 842 mascotas</span>
+<span class="text-outline-variant">•</span>
+<span class="bg-surface-container-high px-2 py-0.5 rounded-full flex items-center gap-1 text-on-surface">
+<span>Caninos &amp; Felinos</span>
+<span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</span>
+<span class="bg-surface-container-high px-2 py-0.5 rounded-full flex items-center gap-1 text-on-surface">
+<span>Filtro Oncológico / Activo</span>
+<span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</span>
+</div>
+</section>
+<!-- MAIN WORKSPACE: TABLE + PREVIEW SLIDEOUT -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- PATIENT DATA TABLE (EXPANDS TO 12 COLS IF PREVIEW HIDDEN) -->
+<section class="xl:col-span-8 bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col transition-all duration-300" id="table-container">
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
+<tr>
+<th class="py-3.5 px-space-md font-semibold" scope="col">Mascota</th>
+<th class="py-3.5 px-space-sm font-semibold" scope="col">Sexo / Edad</th>
+<th class="py-3.5 px-space-sm font-semibold" scope="col">Peso / Color</th>
+<th class="py-3.5 px-space-md font-semibold" scope="col">Propietario</th>
+<th class="py-3.5 px-space-sm font-semibold" scope="col">Diagnóstico Activo</th>
+<th class="py-3.5 px-space-sm font-semibold" scope="col">Próx. Vacuna / Plan</th>
+<th class="py-3.5 px-space-md font-semibold text-right" scope="col">Acciones</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md text-on-surface divide-y divide-surface-container-low">
+<!-- PATIENT 1: MAX (SELECTED IN PREVIEW) -->
+<tr class="hover:bg-surface-container-low/70 transition-colors bg-secondary-container/20 group cursor-pointer" onclick="selectPatient('max')">
+<td class="py-3.5 px-space-md">
+<div class="flex items-center gap-3">
+<div class="relative w-11 h-11 rounded-xl overflow-hidden bg-primary-container flex-shrink-0 shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A portrait of a healthy golden Labrador retriever sitting attentively in a bright, modern veterinary clinic room with soft natural lighting and sterile warm interior." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWKjXbxgAgpEytniw1nq95iYf6ohkyn85szTIZyyaSrx9wCJbzrfeXxBCIeIfsbxL4YYLbuKjVGz764Q5GseS5AfruUlAhlZoUdmckS85ShSQd-UtsIAGb1yX5azLo253fCBUCKnWYe_lvvEI2sdiyEgB2ssvoQKzB6IKU-X_TMJNTWD8y5ftgjU6uWB5AFzvZb6xYSyUd-xFkFj3HLX2hi1VmP6xdD2_lxt0yZD90SPrmTyT2xL57YQ"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-secondary rounded-full ring-2 ring-surface-container-lowest" title="Activo"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md font-bold text-primary group-hover:text-secondary transition-colors">Max</span>
+<span class="font-code-data text-code-data text-outline font-medium">#MC-8021</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Canino • Labrador Retriever</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-sm">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-medium text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">male</span>Macho
+                  </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">4 años, 2 m</span>
+</div>
+</td>
+<td class="py-3.5 px-space-sm">
+<div class="flex flex-col">
+<span class="font-code-data text-code-data font-semibold text-primary">32.5 kg</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Dorado</span>
+</div>
+</td>
+<td class="py-3.5 px-space-md">
+<div class="flex flex-col">
+<a class="font-label-md text-label-md font-semibold text-primary hover:text-secondary transition-colors truncate" href="#">Roberto Gómez</a>
+<span class="font-code-data text-code-data text-outline">CI: 10.452.881</span>
+<span class="font-code-data text-code-data text-secondary flex items-center gap-0.5 mt-0.5">
+<span class="material-symbols-outlined text-[12px]">call</span>+56 9 8452 1190
+                  </span>
+</div>
+</td>
+<td class="py-3.5 px-space-sm max-w-[190px]">
+<div class="flex flex-col gap-1">
+<span class="font-code-data text-code-data bg-tertiary-fixed text-on-tertiary-fixed font-semibold px-2 py-0.5 rounded flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-fixed"></span>Linfoma cutáneo I
+                  </span>
+<span class="font-body-sm text-body-sm text-secondary font-medium">En remisión (Ciclo 4)</span>
+</div>
+</td>
+<td class="py-3.5 px-space-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-semibold text-primary">15 Oct 2026</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Antirrábica Anual</span>
+</div>
+</td>
+<td class="py-3.5 px-space-md text-right">
+<div class="flex items-center justify-end gap-1.5" onclick="event.stopPropagation()">
+<button class="p-1.5 bg-secondary-container/60 hover:bg-secondary-container text-on-secondary-fixed-variant rounded-lg transition-colors" onclick="selectPatient('max')" title="Ver Historial Clínico" type="button">
+<span class="material-symbols-outlined text-[18px]">clinical_notes</span>
+</button>
+<button class="p-1.5 bg-surface-container hover:bg-surface-container-high text-primary rounded-lg transition-colors" title="Nueva Consulta" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+</button>
+<div class="relative group/menu">
+<button class="p-1.5 hover:bg-surface-container text-outline hover:text-on-surface rounded-lg transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</td>
+</tr>
+<!-- PATIENT 2: LUNA -->
+<tr class="hover:bg-surface-container-low/70 transition-colors group cursor-pointer" onclick="selectPatient('luna')">
+<td class="py-3.5 px-space-md">
+<div class="flex items-center gap-3">
+<div class="relative w-11 h-11 rounded-xl overflow-hidden bg-primary-container flex-shrink-0 shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A close up shot of a domestic short-haired calico cat with curious green eyes lying gently on a clean medical examination mat inside a modern veterinary facility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUaPMXbS-7PGOpqliB_8yWZNkFk9i6hWcVRpNF4TJwFBBHC_L1fD2dirazzR_KIu-c3p01zpL1GDV6hBEC2urZim5cDIZEDpT_O_9yy905i7QZeTmQCLZOtSWXr4pl15LSTuRBhv2wBhCkgISf2hEGFxKZwRGFZZUIWUuhNAWByEdfGXd7YPuA7Ge3W-NYs3SnUI18nShNd0QtPXIXuoUUUr2xZ7aWfhgpKqz9kluPW0gcGU25ZGcXrw"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-secondary rounded-full ring-2 ring-surface-container-lowest" title="Activo"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md font-bold text-primary group-hover:text-secondary transition-colors">Luna</span>
+<span class="font-code-data text-code-data text-outline font-medium">#MC-4109</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Felino • Doméstico Mestizo</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-sm">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-medium text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">female</span>Hembra
+                  </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">2 años, 8 m</span>
+</div>
+</td>
+<td class="py-3.5 px-space-sm">
+<div class="flex flex-col">
+<span class="font-code-data text-code-data font-semibold text-primary">4.1 kg</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Carey / Blanco</span>
+</div>
+</td>
+<td class="py-3.5 px-space-md">
+<div class="flex flex-col">
+<a class="font-label-md text-label-md font-semibold text-primary hover:text-secondary transition-colors truncate" href="#">Camila Silva</a>
+<span class="font-code-data text-code-data text-outline">CI: 18.234.901</span>
+<span class="font-code-data text-code-data text-secondary flex items-center gap-0.5 mt-0.5">
+<span class="material-symbols-outlined text-[12px]">call</span>+56 9 7312 8844
+                  </span>
+</div>
+</td>
+<td class="py-3.5 px-space-sm max-w-[190px]">
+<div class="flex flex-col gap-1">
+<span class="font-code-data text-code-data bg-secondary-container/60 text-on-secondary-fixed-variant font-semibold px-2 py-0.5 rounded flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>Sano / Control
+                  </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Esterilización completa</span>
+</div>
+</td>
+<td class="py-3.5 px-space-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-semibold text-primary">02 Nov 2026</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Triple Felina (Refuerzo)</span>
+</div>
+</td>
+<td class="py-3.5 px-space-md text-right">
+<div class="flex items-center justify-end gap-1.5" onclick="event.stopPropagation()">
+<button class="p-1.5 bg-surface-container-low hover:bg-surface-container text-primary rounded-lg transition-colors" onclick="selectPatient('luna')" title="Ver Historial Clínico" type="button">
+<span class="material-symbols-outlined text-[18px]">clinical_notes</span>
+</button>
+<button class="p-1.5 bg-surface-container hover:bg-surface-container-high text-primary rounded-lg transition-colors" title="Nueva Consulta" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container text-outline hover:text-on-surface rounded-lg transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- PATIENT 3: THOR -->
+<tr class="hover:bg-surface-container-low/70 transition-colors group cursor-pointer" onclick="selectPatient('thor')">
+<td class="py-3.5 px-space-md">
+<div class="flex items-center gap-3">
+<div class="relative w-11 h-11 rounded-xl overflow-hidden bg-primary-container flex-shrink-0 shadow-sm">
+<img class="w-full h-full object-cover" data-alt="An athletic German Shepherd dog sitting quietly wearing a specialized soft collar in a calm veterinary assessment room with cool neutral medical tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAK6khqUB0bydud9NEECcrgaaAJmHsm8DGufg03VwJIAJvKeU-K5_wJX2eL9I9JYg25ENAvK-xIHLYfWXZZfnBefOflBZKbPMELqW9luifL6Od459f1CPay78DU0oo6Ztx3Ls2BU7UsvH56nO06qnJlCvUxsFKtLsMF0HYP5dWDyPSegmYEK3U_vaqKls_2efWGevdLnC_DWeA9jMRpKTGob0mqmecL0GylLqs1X4TIQaysmQssogSbLg"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-tertiary-fixed-dim rounded-full ring-2 ring-surface-container-lowest" title="En Tratamiento"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md font-bold text-primary group-hover:text-secondary transition-colors">Thor</span>
+<span class="font-code-data text-code-data text-outline font-medium">#MC-9943</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Canino • Pastor Alemán</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-sm">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-medium text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">male</span>Macho
+                  </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">6 años</span>
+</div>
+</td>
+<td class="py-3.5 px-space-sm">
+<div class="flex flex-col">
+<span class="font-code-data text-code-data font-semibold text-primary">38.2 kg</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Negro y Fuego</span>
+</div>
+</td>
+<td class="py-3.5 px-space-md">
+<div class="flex flex-col">
+<a class="font-label-md text-label-md font-semibold text-primary hover:text-secondary transition-colors truncate" href="#">Matías Vega</a>
+<span class="font-code-data text-code-data text-outline">CI: 15.670.320</span>
+<span class="font-code-data text-code-data text-secondary flex items-center gap-0.5 mt-0.5">
+<span class="material-symbols-outlined text-[12px]">call</span>+56 9 9120 4402
+                  </span>
+</div>
+</td>
+<td class="py-3.5 px-space-sm max-w-[190px]">
+<div class="flex flex-col gap-1">
+<span class="font-code-data text-code-data bg-tertiary-fixed text-on-tertiary-fixed font-semibold px-2 py-0.5 rounded flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-fixed"></span>Mastocitoma GII
+                  </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Protocolo Vinblastina</span>
+</div>
+</td>
+<td class="py-3.5 px-space-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-semibold text-error">22 Oct 2026 (Próx)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Hemograma + Quimio</span>
+</div>
+</td>
+<td class="py-3.5 px-space-md text-right">
+<div class="flex items-center justify-end gap-1.5" onclick="event.stopPropagation()">
+<button class="p-1.5 bg-surface-container-low hover:bg-surface-container text-primary rounded-lg transition-colors" onclick="selectPatient('thor')" title="Ver Historial Clínico" type="button">
+<span class="material-symbols-outlined text-[18px]">clinical_notes</span>
+</button>
+<button class="p-1.5 bg-surface-container hover:bg-surface-container-high text-primary rounded-lg transition-colors" title="Nueva Consulta" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container text-outline hover:text-on-surface rounded-lg transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- PATIENT 4: MIA -->
+<tr class="hover:bg-surface-container-low/70 transition-colors group cursor-pointer" onclick="selectPatient('mia')">
+<td class="py-3.5 px-space-md">
+<div class="flex items-center gap-3">
+<div class="relative w-11 h-11 rounded-xl overflow-hidden bg-primary-container flex-shrink-0 shadow-sm">
+<div class="w-full h-full flex items-center justify-center bg-surface-container text-secondary">
+<span class="material-symbols-outlined text-[24px]">cruelty_free</span>
+</div>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-secondary rounded-full ring-2 ring-surface-container-lowest" title="Activo"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md font-bold text-primary group-hover:text-secondary transition-colors">Mia</span>
+<span class="font-code-data text-code-data text-outline font-medium">#MC-1205</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Exótico • Conejo Enano Holandés</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-space-sm">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-medium text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">female</span>Hembra
+                  </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">1 año, 4 m</span>
+</div>
+</td>
+<td class="py-3.5 px-space-sm">
+<div class="flex flex-col">
+<span class="font-code-data text-code-data font-semibold text-primary">1.2 kg</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Blanco Ceniza</span>
+</div>
+</td>
+<td class="py-3.5 px-space-md">
+<div class="flex flex-col">
+<a class="font-label-md text-label-md font-semibold text-primary hover:text-secondary transition-colors truncate" href="#">Daniela Paz</a>
+<span class="font-code-data text-code-data text-outline">CI: 19.882.014</span>
+<span class="font-code-data text-code-data text-secondary flex items-center gap-0.5 mt-0.5">
+<span class="material-symbols-outlined text-[12px]">call</span>+56 9 4432 9901
+                  </span>
+</div>
+</td>
+<td class="py-3.5 px-space-sm max-w-[190px]">
+<div class="flex flex-col gap-1">
+<span class="font-code-data text-code-data bg-surface-container-high text-on-surface font-semibold px-2 py-0.5 rounded flex items-center gap-1 w-max">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>Maloclusión Dental
+                  </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Limado correctivo ok</span>
+</div>
+</td>
+<td class="py-3.5 px-space-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-semibold text-primary">10 Dic 2026</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Revisión de Molares</span>
+</div>
+</td>
+<td class="py-3.5 px-space-md text-right">
+<div class="flex items-center justify-end gap-1.5" onclick="event.stopPropagation()">
+<button class="p-1.5 bg-surface-container-low hover:bg-surface-container text-primary rounded-lg transition-colors" onclick="selectPatient('mia')" title="Ver Historial Clínico" type="button">
+<span class="material-symbols-outlined text-[18px]">clinical_notes</span>
+</button>
+<button class="p-1.5 bg-surface-container hover:bg-surface-container-high text-primary rounded-lg transition-colors" title="Nueva Consulta" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container text-outline hover:text-on-surface rounded-lg transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- PAGINATION & METRICS FOOTER -->
+<div class="p-space-md bg-surface-container-low/60 flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span>Página 1 de 42</span>
+<span>•</span>
+<label class="flex items-center gap-1">
+<span>Mostrar</span>
+<select class="bg-surface-container-lowest text-on-surface font-code-data text-code-data rounded px-1.5 py-1 focus:outline-none">
+<option>10 registros</option>
+<option>25 registros</option>
+<option>50 registros</option>
+</select>
+</label>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-2 rounded-lg bg-surface-container-lowest text-outline opacity-50 cursor-not-allowed" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md" type="button">1</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label-md text-label-md transition-colors" type="button">2</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label-md text-label-md transition-colors" type="button">3</button>
+<span class="px-1 text-outline">...</span>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label-md text-label-md transition-colors" type="button">42</button>
+<button class="p-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- RIGHT CLINICAL PREVIEW DRAWER / FICHA RÁPIDA -->
+<aside class="xl:col-span-4 bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col transition-all duration-300" id="patient-preview-card">
+<!-- PREVIEW HEADER -->
+<div class="p-space-lg bg-gradient-to-b from-surface-container-low to-surface-container-lowest flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-code-data text-code-data uppercase tracking-wider bg-primary-container text-secondary-container px-2 py-0.5 rounded font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">badge</span>Ficha Clínica Rápida
+            </span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 text-outline hover:text-primary hover:bg-surface-container rounded-lg transition-colors" title="Imprimir / PDF" type="button">
+<span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+</button>
+<button class="p-1.5 text-outline hover:text-primary hover:bg-surface-container rounded-lg transition-colors" title="Editar Ficha" type="button">
+<span class="material-symbols-outlined text-[20px]">edit_note</span>
+</button>
+</div>
+</div>
+<!-- PET HERO BANNER INSIDE DRAWER -->
+<div class="flex items-start gap-space-md">
+<div class="relative w-20 h-20 rounded-2xl overflow-hidden bg-primary-container flex-shrink-0 shadow-md">
+<img class="w-full h-full object-cover" data-alt="A high detail portrait of a canine patient named Max, a four-year-old blonde Labrador retriever in a veterinary setting looking calmly at the camera." id="preview-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv5mrLBkubJ32NZwPeUfU2AmgCUaIYTZstyext9D5SPN4c1evQHlfGQvVsdtEVcG0-tH-gdQPVTVBbKjqZ1RjhLYG2p57M6aGP2tvRFcm2qybXlvpYrHHUDjW2ERh9QQxl0vrnVBq26OmEPMxzKDzloBwQ8u-58SwxJGc-P0dy5F-roUV8se11K_zKL5GNp7IRoHfJKOw__iTXWni4iOYcI40DtENwludm2Ph8WaMLaj7x8A_H98sHCA"/>
+<span class="absolute bottom-1 right-1 w-3.5 h-3.5 bg-secondary rounded-full ring-2 ring-surface-container-lowest"></span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md font-bold text-primary truncate" id="preview-name">Max</h2>
+<span class="font-code-data text-code-data bg-tertiary-fixed text-on-tertiary-fixed font-semibold px-2 py-0.5 rounded">ONCO-1</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5" id="preview-sub">Canino • Labrador Retriever</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="font-code-data text-code-data bg-surface-container px-2 py-0.5 rounded text-on-surface font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">pin</span>#MC-8021
+              </span>
+<span class="font-code-data text-code-data bg-secondary-container/50 text-on-secondary-fixed-variant px-2 py-0.5 rounded font-semibold">
+                Supabase Synced
+              </span>
+</div>
+</div>
+</div>
+</div>
+<!-- CLINICAL STATS RIBBON -->
+<div class="grid grid-cols-3 bg-surface-container-low p-space-md gap-2 text-center">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Peso Actual</span>
+<span class="font-title-md text-title-md font-bold text-primary mt-0.5" id="preview-weight">32.5 kg</span>
+<span class="font-code-data text-code-data text-secondary">Estable (+0.2)</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Edad</span>
+<span class="font-title-md text-title-md font-bold text-primary mt-0.5" id="preview-age">4 años</span>
+<span class="font-code-data text-code-data text-on-surface-variant">2 meses</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Esterilizado</span>
+<span class="font-title-md text-title-md font-bold text-secondary mt-0.5">SÍ</span>
+<span class="font-code-data text-code-data text-on-surface-variant">Orquiectomía</span>
+</div>
+</div>
+<!-- CLINICAL SUMMARY SEGMENTS -->
+<div class="p-space-lg flex flex-col gap-space-lg flex-1 overflow-y-auto">
+<!-- PROPIETARIO CARD COMPONENT -->
+<div class="bg-surface-container-low p-space-md rounded-xl flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Tutor Responsable</span>
+<a class="font-label-sm text-label-sm text-secondary hover:underline font-semibold flex items-center gap-0.5" href="#">
+<span>Ver ficha tutor</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container text-secondary-container flex items-center justify-center font-title-md text-title-md font-bold">
+              RG
+            </div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-label-lg text-label-lg font-semibold text-primary truncate" id="preview-owner-name">Roberto Gómez</span>
+<span class="font-code-data text-code-data text-outline">RUT: 10.452.881-K • Las Condes, Santiago</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<a class="flex items-center gap-1.5 font-code-data text-code-data bg-surface-container-lowest px-3 py-1.5 rounded-lg text-on-surface hover:text-secondary shadow-sm transition-colors" href="tel:+56984521190">
+<span class="material-symbols-outlined text-[16px] text-secondary">phone</span>
+<span>+56 9 8452 1190</span>
+</a>
+<a class="flex items-center gap-1.5 font-code-data text-code-data bg-surface-container-lowest px-3 py-1.5 rounded-lg text-on-surface hover:text-secondary shadow-sm transition-colors" href="mailto:rgomez@gmail.com">
+<span class="material-symbols-outlined text-[16px] text-outline">mail</span>
+<span>Enviar Correo</span>
+</a>
+</div>
+</div>
+<!-- SECTIONS TABS / SUMMARY ACCORDION -->
+<div class="flex flex-col gap-space-md">
+<!-- HISTORIAL MÉDICO SUMMARY -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-bold text-primary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-secondary">history_edu</span>
+<span>Atenciones Registradas (8)</span>
+</span>
+<span class="font-code-data text-code-data text-on-surface-variant">Última: 28 Sep 2026</span>
+</div>
+<!-- Mini timeline item -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-semibold text-primary">Control Protocolo CHOP - Ciclo 3</span>
+<span class="font-code-data text-code-data text-outline">28 Sep</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Nódulos periféricos no palpables. Plaquetas y leucocitos en rango normal. Tolera ciclo con leve hiporexia transitoria.</p>
+<span class="font-code-data text-code-data text-secondary font-medium">Dr. Carlos Mendoza • Oncología</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-semibold text-primary">Biopsia por Aspiración con Aguja Fina (PAAF)</span>
+<span class="font-code-data text-code-data text-outline">12 Ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Confirmación citopatológica de linfoma grado intermedio.</p>
+</div>
+</div>
+<!-- VACUNAS VIGENTES -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-bold text-primary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-secondary">vaccines</span>
+<span>Vacunas Vigentes (4)</span>
+</span>
+<span class="font-code-data text-code-data text-secondary font-medium">Al día</span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-surface-container-low p-2 rounded-lg flex flex-col">
+<span class="font-label-sm text-label-sm font-semibold text-primary">Séxtuple Canina</span>
+<span class="font-code-data text-code-data text-outline">Vence: 14 Ene 2027</span>
+<span class="font-code-data text-code-data text-secondary mt-1">Lote: SX-8910</span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg flex flex-col">
+<span class="font-label-sm text-label-sm font-semibold text-primary">Antirrábica</span>
+<span class="font-code-data text-code-data text-error font-medium">Vence: 15 Oct 2026</span>
+<span class="font-code-data text-code-data text-on-surface-variant mt-1">Próx. 17 días</span>
+</div>
+</div>
+</div>
+<!-- TRATAMIENTOS ACTUALES / FARMACOLOGÍA -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-bold text-primary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-secondary">medication</span>
+<span>Tratamientos Activos</span>
+</span>
+<span class="font-code-data text-code-data text-tertiary-container bg-tertiary-fixed font-semibold px-1.5 py-0.2 rounded">Oncológico</span>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-semibold text-primary">Prednisona 20mg</span>
+<span class="font-code-data text-code-data bg-surface-container px-2 py-0.5 rounded text-on-surface">1 comp / 24 hrs</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-semibold text-primary">Omeprazol 10mg</span>
+<span class="font-code-data text-code-data bg-surface-container px-2 py-0.5 rounded text-on-surface">1 cáp / ayunas</span>
+</div>
+<div class="pt-1 flex items-center justify-between text-on-surface-variant font-code-data text-code-data">
+<span>Próxima quimioterapia IV:</span>
+<span class="font-bold text-primary">12 Octubre (Ciclo 4)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ACTION BUTTONS -->
+<div class="flex flex-col gap-2 pt-space-xs">
+<button class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg py-3 rounded-lg shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+<span>Ver Expediente Completo en Supabase</span>
+</button>
+<button class="w-full flex items-center justify-center gap-2 bg-surface-container hover:bg-surface-container-high text-primary font-label-lg text-label-lg py-2.5 rounded-lg transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>Ingresar Nueva Consulta Clínica</span>
+</button>
+</div>
+</div>
+</aside>
+</div>
+<!-- MODAL / SLIDE-OVER: REGISTRAR NUEVA MASCOTA (HIDDEN BY DEFAULT) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-primary-container/40 backdrop-blur-sm hidden p-4" id="modal-new-pet">
+<div class="bg-surface-container-lowest w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+<!-- MODAL HEADER -->
+<div class="p-space-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary text-on-secondary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[22px]">pets</span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-primary">Registrar Nueva Mascota</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Alta de paciente vinculada a base de datos de propietarios</span>
+</div>
+</div>
+<button class="p-2 text-outline hover:text-on-surface rounded-lg hover:bg-surface-container transition-colors" id="btn-close-modal" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- MODAL FORM BODY -->
+<form class="p-space-lg overflow-y-auto flex flex-col gap-space-md" id="form-new-pet">
+<!-- STEP 1: PROPIETARIO SELECTION -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-primary">Propietario / Tutor</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">person_search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30" placeholder="Buscar por RUT o Nombre de tutor..." type="text" value="Roberto Gómez (CI: 10.452.881-K)"/>
+</div>
+</div>
+<!-- STEP 2: DATOS GENERALES -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-primary">Nombre de la Mascota *</label>
+<input class="h-10 px-3 bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30" placeholder="Ej: Rocky" required="" type="text"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-primary">Número de Microchip</label>
+<input class="h-10 px-3 bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30" placeholder="Ej: 981098109283741" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-primary">Especie *</label>
+<select class="h-10 px-3 bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30">
+<option>Canino</option>
+<option>Felino</option>
+<option>Exótico / Silvestre</option>
+</select>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-primary">Raza</label>
+<input class="h-10 px-3 bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30" placeholder="Ej: Golden Retriever" type="text"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-primary">Sexo *</label>
+<select class="h-10 px-3 bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30">
+<option>Macho</option>
+<option>Hembra</option>
+<option>Macho Castrado</option>
+<option>Hembra Esterilizada</option>
+</select>
+</div>
+</div>
+<!-- STEP 3: BIOMETRICOS -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-primary">Fecha Nacimiento (aprox)</label>
+<input class="h-10 px-3 bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30" type="date"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-primary">Peso Inicial (kg)</label>
+<input class="h-10 px-3 bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30" placeholder="Ej: 14.5" step="0.1" type="number"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-primary">Color y Marcas</label>
+<input class="h-10 px-3 bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30" placeholder="Ej: Manto negro, pecho blanco" type="text"/>
+</div>
+</div>
+<!-- STEP 4: ALERTAS MÉDICAS -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-primary">Alertas Clínicas o Alergias Conocidas</label>
+<textarea class="p-3 bg-surface-container-low text-on-surface font-body-md text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30" placeholder="Ej: Reacción adversa a cefalexina. Sospecha de masa en ganglio poplíteo..." rows="2"></textarea>
+</div>
+<!-- FOOTER BUTTONS -->
+<div class="flex items-center justify-end gap-space-sm pt-space-md">
+<button class="px-space-md py-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-lg text-label-lg transition-colors" id="btn-cancel-modal" type="button">
+            Cancelar
+          </button>
+<button class="flex items-center gap-2 px-space-lg py-2.5 rounded-lg bg-secondary hover:bg-on-secondary-fixed-variant text-on-secondary font-label-lg text-label-lg shadow-sm transition-all" type="submit">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Guardar Mascota</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+<!-- INTERACTION SCRIPT FOR PREVIEWS & MODALS -->
+<script>
+  // Simple client-side data store for dynamic preview selection
+  const patientData = {
+    max: {
+      name: "Max",
+      sub: "Canino • Labrador Retriever",
+      weight: "32.5 kg",
+      age: "4 años",
+      owner: "Roberto Gómez"
+    },
+    luna: {
+      name: "Luna",
+      sub: "Felino • Doméstico Mestizo",
+      weight: "4.1 kg",
+      age: "2 años",
+      owner: "Camila Silva"
+    },
+    thor: {
+      name: "Thor",
+      sub: "Canino • Pastor Alemán",
+      weight: "38.2 kg",
+      age: "6 años",
+      owner: "Matías Vega"
+    },
+    mia: {
+      name: "Mia",
+      sub: "Exótico • Conejo Enano Holandés",
+      weight: "1.2 kg",
+      age: "1 año, 4 m",
+      owner: "Daniela Paz"
+    }
+  };
+
+  function selectPatient(key) {
+    const data = patientData[key];
+    if (!data) return;
+
+    const nameEl = document.getElementById("preview-name");
+    const subEl = document.getElementById("preview-sub");
+    const weightEl = document.getElementById("preview-weight");
+    const ageEl = document.getElementById("preview-age");
+    const ownerEl = document.getElementById("preview-owner-name");
+
+    if (nameEl) nameEl.textContent = data.name;
+    if (subEl) subEl.textContent = data.sub;
+    if (weightEl) weightEl.textContent = data.weight;
+    if (ageEl) ageEl.textContent = data.age;
+    if (ownerEl) ownerEl.textContent = data.owner;
+  }
+
+  // Modal open / close handlers
+  const openModalBtn = document.getElementById("btn-open-new-pet");
+  const closeModalBtn = document.getElementById("btn-close-modal");
+  const cancelModalBtn = document.getElementById("btn-cancel-modal");
+  const modal = document.getElementById("modal-new-pet");
+  const form = document.getElementById("form-new-pet");
+
+  function openModal() {
+    if (modal) modal.classList.remove("hidden");
+  }
+
+  function closeModal() {
+    if (modal) modal.classList.add("hidden");
+  }
+
+  if (openModalBtn) openModalBtn.addEventListener("click", openModal);
+  if (closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
+  if (cancelModalBtn) cancelModalBtn.addEventListener("click", closeModal);
+
+  if (form) {
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      closeModal();
+      alert("Paciente registrado con éxito en base de datos clínica.");
+    });
+  }
+
+  // Filter interaction
+  const searchInput = document.getElementById("patient-search-input");
+  const clearBtn = document.getElementById("btn-clear-filters");
+
+  if (clearBtn && searchInput) {
+    clearBtn.addEventListener("click", function() {
+      searchInput.value = "";
+      const speciesSelect = document.getElementById("filter-species");
+      const sexSelect = document.getElementById("filter-sex");
+      const statusSelect = document.getElementById("filter-status");
+      if (speciesSelect) speciesSelect.value = "all";
+      if (sexSelect) sexSelect.value = "all";
+      if (statusSelect) statusSelect.value = "all";
+    });
+  }
+</script></main></div></body></html>
