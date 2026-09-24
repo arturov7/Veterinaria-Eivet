@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AdminTheme {
   static const forest = Color(0xff0f382a);
   static const emerald = Color(0xff1b8354);
-  static const canvas = Color(0xfff8f9ff);
+  static const canvas = Color(0xffeff6f3);
   static const ink = Color(0xff0b1c30);
   static const muted = Color(0xff64748b);
   static const border = Color(0xffe2e8f0);
@@ -18,23 +18,38 @@ class AdminTheme {
     );
     return ThemeData(
       useMaterial3: true,
+      fontFamily: 'Inter',
       colorScheme: scheme,
       scaffoldBackgroundColor: canvas,
       dividerColor: border,
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
+          fontFamily: 'Plus Jakarta Sans',
           color: forest,
           fontWeight: FontWeight.w700,
           letterSpacing: -.7,
         ),
         headlineMedium: TextStyle(
+          fontFamily: 'Plus Jakarta Sans',
           color: forest,
           fontWeight: FontWeight.w700,
           letterSpacing: -.4,
         ),
-        headlineSmall: TextStyle(color: forest, fontWeight: FontWeight.w700),
-        titleLarge: TextStyle(color: forest, fontWeight: FontWeight.w700),
-        titleMedium: TextStyle(color: ink, fontWeight: FontWeight.w600),
+        headlineSmall: TextStyle(
+          fontFamily: 'Plus Jakarta Sans',
+          color: forest,
+          fontWeight: FontWeight.w700,
+        ),
+        titleLarge: TextStyle(
+          fontFamily: 'Plus Jakarta Sans',
+          color: forest,
+          fontWeight: FontWeight.w700,
+        ),
+        titleMedium: TextStyle(
+          fontFamily: 'Plus Jakarta Sans',
+          color: ink,
+          fontWeight: FontWeight.w600,
+        ),
         bodyLarge: TextStyle(color: ink),
         bodyMedium: TextStyle(color: ink),
         bodySmall: TextStyle(color: muted),

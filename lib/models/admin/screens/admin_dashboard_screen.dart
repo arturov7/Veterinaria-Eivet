@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../controllers/admin_controller.dart';
 import '../admin_models.dart';
 import '../utils/admin_theme.dart';
+import '../widgets/eivet_hero_banner.dart';
 
 class AdminDashboardScreen extends StatelessWidget {
   const AdminDashboardScreen({super.key, this.onNavigate});
@@ -18,6 +19,11 @@ class AdminDashboardScreen extends StatelessWidget {
     final pending = appointments
         .where((x) => x.status.toLowerCase() == 'pendiente')
         .length;
+    final todayAppointments = appointments
+        .where(
+          (x) => x.date != null && DateUtils.isSameDay(x.date, DateTime.now()),
+        )
+        .length;
     final upcoming = vaccines
         .where(
           (x) =>
@@ -27,7 +33,7 @@ class AdminDashboardScreen extends StatelessWidget {
         )
         .length;
     final width = MediaQuery.sizeOf(context).width;
-    final columns = width > 1450
+    final columns = width >= 1250
         ? 5
         : width > 1050
         ? 3
@@ -40,32 +46,40 @@ class AdminDashboardScreen extends StatelessWidget {
         owners.length,
         Icons.badge_outlined,
         '+ registrados',
+        surface: const Color(0xffe8f8ef),
       ),
       _Metric(
         'Mascotas activas',
         pets.length,
         Icons.pets_outlined,
         'Pacientes en ficha',
+        surface: const Color(0xffe7f4ff),
       ),
       _Metric(
-        'Citas pendientes',
-        pending,
+        'Citas de hoy',
+        todayAppointments,
         Icons.calendar_month_outlined,
-        '${appointments.length} solicitudes en total',
+        '$pending pendientes',
         accent: const Color(0xffc29b38),
+        surface: const Color(0xfffff4d9),
       ),
       _Metric(
         'Consultas clínicas',
         consultations.length,
         Icons.medical_services_outlined,
         'Registros en historial',
+        surface: const Color(0xffe6f8f5),
       ),
       _Metric(
-        'Vacunas próximas',
+        'Alertas médicas',
         upcoming,
         Icons.vaccines_outlined,
-        'En los siguientes 30 días',
+        upcoming == 0
+            ? 'Sin alertas de vacunación'
+            : '$upcoming vacunas en 30 días',
         warning: upcoming > 0,
+        accent: const Color(0xffd74b63),
+        surface: const Color(0xffffedf0),
       ),
     ];
 
@@ -95,7 +109,11 @@ class AdminDashboardScreen extends StatelessWidget {
               if (compact) ...[
                 _AppointmentsCard(items: appointments, onNavigate: onNavigate),
                 const SizedBox(height: 16),
-                _QuickAccess(onNavigate: onNavigate),
+                _QuickAccess(
+                  onNavigate: onNavigate,
+                  pets: pets,
+                  vaccines: vaccines,
+                ),
               ] else
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +128,11 @@ class AdminDashboardScreen extends StatelessWidget {
                     const SizedBox(width: 18),
                     Expanded(
                       flex: 4,
-                      child: _QuickAccess(onNavigate: onNavigate),
+                      child: _QuickAccess(
+                        onNavigate: onNavigate,
+                        pets: pets,
+                        vaccines: vaccines,
+                      ),
                     ),
                   ],
                 ),
@@ -130,12 +152,14 @@ class _Metric {
     this.caption, {
     this.accent = AdminTheme.emerald,
     this.warning = false,
+    this.surface = Colors.white,
   });
   final String label, caption;
   final int value;
   final IconData icon;
   final Color accent;
   final bool warning;
+  final Color surface;
 }
 
 class _MetricCard extends StatelessWidget {
@@ -143,7 +167,7 @@ class _MetricCard extends StatelessWidget {
   final _Metric metric;
   @override
   Widget build(BuildContext context) => Card(
-    color: metric.warning ? const Color(0xfffffbeb) : Colors.white,
+    color: metric.surface,
     child: Padding(
       padding: const EdgeInsets.all(17),
       child: Column(
@@ -214,49 +238,12 @@ class _WelcomeCard extends StatelessWidget {
     final today = DateTime.now();
     final date =
         '${today.day.toString().padLeft(2, '0')}/${today.month.toString().padLeft(2, '0')}/${today.year}';
-    final intro = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            _Tag(
-              text: 'CENTRO VETERINARIO',
-              color: const Color(0xffdcfce7),
-              foreground: const Color(0xff065f46),
-            ),
-            _Tag(
-              text: '● Supabase conectado',
-              color: const Color(0xffdcfce7),
-              foreground: const Color(0xff065f46),
-            ),
-            Text(
-              date,
-              style: const TextStyle(fontSize: 11, color: AdminTheme.muted),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Text(
-          'Panel de gestión EIVET',
-          style: Theme.of(
-            context,
-          ).textTheme.headlineMedium?.copyWith(fontSize: compact ? 23 : 27),
-        ),
-        const SizedBox(height: 4),
-        const Text(
-          'Resumen de la actividad clínica y los registros de tu veterinaria.',
-          style: TextStyle(fontSize: 13, color: AdminTheme.muted),
-        ),
-      ],
-    );
     final actions = Wrap(
       spacing: 8,
       runSpacing: 8,
       children: [
-        OutlinedButton.icon(
-          onPressed: () => onNavigate?.call(3),
+        FilledButton.tonalIcon(
+          onPressed: () => onNavigate?.call(1),
           icon: const Icon(Icons.add_circle_outline, size: 18),
           label: const Text('Agendar cita'),
         ),
@@ -267,50 +254,16 @@ class _WelcomeCard extends StatelessWidget {
         ),
       ],
     );
-    return Card(
-      child: Padding(
-        padding: EdgeInsets.all(compact ? 18 : 23),
-        child: compact
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [intro, const SizedBox(height: 16), actions],
-              )
-            : Row(
-                children: [
-                  Expanded(child: intro),
-                  const SizedBox(width: 20),
-                  actions,
-                ],
-              ),
-      ),
+    return EivetHeroBanner(
+      kicker: 'Centro Veterinario • Supabase conectado • $date',
+      title: 'Bienvenido de nuevo, Dr. Carlos Mendoza',
+      subtitle:
+          'Jornada especializada en oncología y cirugía ambulatoria. Protocolos activos en sala 1 y 3.',
+      actions: actions,
+      icon: Icons.health_and_safety_outlined,
+      compact: compact,
     );
   }
-}
-
-class _Tag extends StatelessWidget {
-  const _Tag({
-    required this.text,
-    required this.color,
-    required this.foreground,
-  });
-  final String text;
-  final Color color, foreground;
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-    decoration: BoxDecoration(
-      color: color,
-      borderRadius: BorderRadius.circular(6),
-    ),
-    child: Text(
-      text,
-      style: TextStyle(
-        fontSize: 10,
-        color: foreground,
-        fontWeight: FontWeight.w700,
-      ),
-    ),
-  );
 }
 
 class _AppointmentsCard extends StatelessWidget {
@@ -341,7 +294,7 @@ class _AppointmentsCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Agenda de citas del día',
+                        'Agenda de Citas del Día',
                         style: TextStyle(
                           fontSize: 16,
                           color: AdminTheme.forest,
@@ -350,14 +303,14 @@ class _AppointmentsCard extends StatelessWidget {
                       ),
                       SizedBox(height: 3),
                       Text(
-                        'Solicitudes programadas para hoy',
+                        'Gestión en tiempo real de turnos y admisiones clínicas',
                         style: TextStyle(fontSize: 11, color: AdminTheme.muted),
                       ),
                     ],
                   ),
                 ),
                 TextButton(
-                  onPressed: () => onNavigate?.call(3),
+                  onPressed: () => onNavigate?.call(1),
                   child: const Text('Ver agenda'),
                 ),
               ],
@@ -481,56 +434,85 @@ class _AppointmentRow extends StatelessWidget {
 }
 
 class _QuickAccess extends StatelessWidget {
-  const _QuickAccess({required this.onNavigate});
+  const _QuickAccess({
+    required this.onNavigate,
+    required this.pets,
+    required this.vaccines,
+  });
   final ValueChanged<int>? onNavigate;
+  final List<AdminPet> pets;
+  final List<AdminRecord> vaccines;
   @override
-  Widget build(BuildContext context) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Accesos rápidos',
-            style: TextStyle(
-              fontSize: 16,
-              color: AdminTheme.forest,
-              fontWeight: FontWeight.w700,
-            ),
+  Widget build(BuildContext context) => Column(
+    children: [
+      Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.vaccines_outlined, color: AdminTheme.emerald),
+                  const SizedBox(width: 9),
+                  const Expanded(
+                    child: Text(
+                      'Vacunas y Tratamientos Próximos',
+                      style: TextStyle(fontSize: 15, color: AdminTheme.forest, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  TextButton(onPressed: () => onNavigate?.call(5), child: const Text('Ver todos')),
+                ],
+              ),
+              const Text('Seguimiento de pacientes y recordatorios', style: TextStyle(fontSize: 11, color: AdminTheme.muted)),
+              const SizedBox(height: 10),
+              if (vaccines.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Text('No hay vacunas pendientes registradas.', style: TextStyle(color: AdminTheme.muted, fontSize: 12)),
+                )
+              else
+                ...vaccines.take(3).map((v) => _QuickTile(
+                  icon: Icons.vaccines_outlined,
+                  title: v.petName.isEmpty ? v.title : '${v.petName} • ${v.title}',
+                  subtitle: v.date == null ? 'Fecha por confirmar' : 'Próxima dosis: ${v.date!.day}/${v.date!.month}/${v.date!.year}',
+                  onTap: () => onNavigate?.call(5),
+                )),
+            ],
           ),
-          const SizedBox(height: 4),
-          const Text(
-            'Continúa con las tareas frecuentes',
-            style: TextStyle(fontSize: 11, color: AdminTheme.muted),
-          ),
-          const SizedBox(height: 14),
-          _QuickTile(
-            icon: Icons.person_add_alt_1_outlined,
-            title: 'Registrar propietario',
-            subtitle: 'Agregar un nuevo cliente',
-            onTap: () => onNavigate?.call(1),
-          ),
-          _QuickTile(
-            icon: Icons.pets_outlined,
-            title: 'Registrar mascota',
-            subtitle: 'Crear ficha de paciente',
-            onTap: () => onNavigate?.call(2),
-          ),
-          _QuickTile(
-            icon: Icons.calendar_month_outlined,
-            title: 'Gestionar citas',
-            subtitle: 'Revisar solicitudes y estados',
-            onTap: () => onNavigate?.call(3),
-          ),
-          _QuickTile(
-            icon: Icons.medical_information_outlined,
-            title: 'Historial clínico',
-            subtitle: 'Consultas, vacunas y tratamientos',
-            onTap: () => onNavigate?.call(4),
-          ),
-        ],
+        ),
       ),
-    ),
+      const SizedBox(height: 14),
+      Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.groups_2_outlined, color: AdminTheme.emerald),
+                  const SizedBox(width: 9),
+                  const Expanded(
+                    child: Text('Pacientes Recientes', style: TextStyle(fontSize: 15, color: AdminTheme.forest, fontWeight: FontWeight.w700)),
+                  ),
+                  TextButton(onPressed: () => onNavigate?.call(3), child: const Text('Ver todos')),
+                ],
+              ),
+              if (pets.isEmpty)
+                const Text('Todavía no hay pacientes registrados.', style: TextStyle(color: AdminTheme.muted, fontSize: 12))
+              else
+                ...pets.take(3).map((pet) => _QuickTile(
+                  icon: Icons.pets_outlined,
+                  title: pet.name,
+                  subtitle: '${pet.species} • ${pet.ownerName}',
+                  onTap: () => onNavigate?.call(3),
+                )),
+            ],
+          ),
+        ),
+      ),
+    ],
   );
 }
 

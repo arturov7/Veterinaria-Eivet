@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/admin_theme.dart';
+import 'eivet_logo.dart';
 
 class AdminSidebar extends StatelessWidget {
   const AdminSidebar({
@@ -18,28 +19,37 @@ class AdminSidebar extends StatelessWidget {
   final VoidCallback? onLogout;
 
   static const labels = [
-    'Panel principal',
+    'Dashboard',
+    'Citas veterinarias',
     'Propietarios',
     'Mascotas',
-    'Citas veterinarias',
     'Consultas e historial',
     'Vacunas y tratamientos',
+    'Especialidad Oncológica',
+    'Reportes',
+    'Configuración / Seguridad',
   ];
   static const icons = [
     Icons.dashboard_outlined,
+    Icons.calendar_month_outlined,
     Icons.badge_outlined,
     Icons.pets_outlined,
-    Icons.calendar_month_outlined,
     Icons.medical_information_outlined,
     Icons.vaccines_outlined,
+    Icons.biotech_outlined,
+    Icons.analytics_outlined,
+    Icons.shield_outlined,
   ];
 
   @override
   Widget build(BuildContext context) => Container(
     width: 256,
     decoration: const BoxDecoration(
-      color: Colors.white,
-      border: Border(right: BorderSide(color: AdminTheme.border)),
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Color(0xff073d30), Color(0xff00291f)],
+      ),
     ),
     child: Column(
       children: [
@@ -47,15 +57,7 @@ class AdminSidebar extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 22, 16, 20),
           child: Row(
             children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: AdminTheme.forest,
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                child: const Icon(Icons.pets, color: Color(0xff93f3bb)),
-              ),
+              const EivetLogo(size: 42),
               const SizedBox(width: 11),
               const Expanded(
                 child: Column(
@@ -64,7 +66,7 @@ class AdminSidebar extends StatelessWidget {
                     Text(
                       'Veterinaria EIVET',
                       style: TextStyle(
-                        color: AdminTheme.ink,
+                        color: Colors.white,
                         fontWeight: FontWeight.w800,
                         fontSize: 15,
                       ),
@@ -73,7 +75,7 @@ class AdminSidebar extends StatelessWidget {
                     Text(
                       '● PANEL VETERINARIO / ADMIN',
                       style: TextStyle(
-                        color: AdminTheme.emerald,
+                        color: const Color(0xff8ef0bd),
                         fontSize: 9,
                         letterSpacing: .45,
                         fontWeight: FontWeight.w700,
@@ -91,7 +93,7 @@ class AdminSidebar extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
             decoration: BoxDecoration(
-              color: const Color(0xfff1f5f9),
+              color: Colors.white.withValues(alpha: .10),
               borderRadius: BorderRadius.circular(9),
             ),
             child: const Row(
@@ -99,15 +101,15 @@ class AdminSidebar extends StatelessWidget {
                 Icon(
                   Icons.medical_services_outlined,
                   size: 17,
-                  color: AdminTheme.emerald,
+                  color: const Color(0xff9bf0c2),
                 ),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Clínica veterinaria',
+                    'Especialidad Oncológica',
                     style: TextStyle(
                       fontSize: 12,
-                      color: AdminTheme.ink,
+                      color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -116,7 +118,7 @@ class AdminSidebar extends StatelessWidget {
                   'ACTIVA',
                   style: TextStyle(
                     fontSize: 9,
-                    color: AdminTheme.emerald,
+                    color: const Color(0xffffdc84),
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -133,7 +135,7 @@ class AdminSidebar extends StatelessWidget {
             itemBuilder: (context, i) {
               final selected = index == i;
               return Material(
-                color: selected ? AdminTheme.forest : Colors.transparent,
+                color: selected ? AdminTheme.emerald : Colors.transparent,
                 borderRadius: BorderRadius.circular(9),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(9),
@@ -148,14 +150,18 @@ class AdminSidebar extends StatelessWidget {
                         Icon(
                           icons[i],
                           size: 19,
-                          color: selected ? Colors.white : AdminTheme.muted,
+                          color: selected
+                              ? Colors.white
+                              : const Color(0xffb8d3c6),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             labels[i],
                             style: TextStyle(
-                              color: selected ? Colors.white : AdminTheme.ink,
+                              color: selected
+                                  ? Colors.white
+                                  : const Color(0xffe2eee8),
                               fontSize: 13,
                               fontWeight: selected
                                   ? FontWeight.w700
@@ -173,16 +179,16 @@ class AdminSidebar extends StatelessWidget {
         ),
         Container(
           padding: const EdgeInsets.all(14),
-          decoration: const BoxDecoration(
-            color: Color(0xfff8f9ff),
-            border: Border(top: BorderSide(color: AdminTheme.border)),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: .07),
+            border: const Border(top: BorderSide(color: Colors.white24)),
           ),
           child: Column(
             children: [
               Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: AdminTheme.forest,
+                    backgroundColor: AdminTheme.emerald,
                     radius: 19,
                     child: Text(
                       name.isEmpty ? 'E' : name.trim()[0].toUpperCase(),
@@ -203,7 +209,7 @@ class AdminSidebar extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 12,
-                            color: AdminTheme.ink,
+                            color: Colors.white,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -213,7 +219,7 @@ class AdminSidebar extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 10,
-                            color: AdminTheme.muted,
+                            color: const Color(0xffb8d3c6),
                           ),
                         ),
                       ],
