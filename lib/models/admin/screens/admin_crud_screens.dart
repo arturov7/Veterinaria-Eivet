@@ -35,25 +35,37 @@ class _OwnerBodyState extends State<_OwnerBody> {
         .toList();
     return _Scaffold(
       type: 'propietarios',
-      title: 'Propietarios',
+      title: 'Clientes y propietarios',
       onAdd: () => _ownerDialog(c, a),
+      onRefresh: a.load,
       search: (v) => setState(() => q = v),
       loading: a.loading,
-      empty: 'No hay propietarios registrados.',
+      empty: 'No hay clientes ni propietarios registrados.',
+      error: a.error,
       rows: rows.map(
         (e) => DataRow(
           cells: [
-            DataCell(Text(e.name)),
+            DataCell(Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(e.name),
+                const SizedBox(width: 8),
+                Chip(label: Text(e.isClientAccount ? 'App móvil' : 'Manual')),
+              ],
+            )),
             DataCell(Text(e.phone)),
             DataCell(Text(e.email)),
             DataCell(Text(e.address)),
-            DataCell(
-              _actions(
-                c,
-                () => _ownerDialog(c, a, e),
-                () => _delete(c, a, e.id!, e.name),
-              ),
-            ),
+            DataCell(e.isClientAccount
+                ? const Tooltip(
+                    message: 'Esta cuenta se administra en Supabase Auth.',
+                    child: Icon(Icons.lock_outline),
+                  )
+                : _actions(
+                    c,
+                    () => _ownerDialog(c, a, e),
+                    () => _delete(c, a, e.id!, e.name),
+                  )),
           ],
         ),
       ),
@@ -1861,6 +1873,8 @@ class _Scaffold extends StatelessWidget {
     required this.rows,
     required this.type,
     this.filter,
+    this.error,
+    this.onRefresh,
   });
   final String title, empty;
   final String type;
@@ -1869,6 +1883,8 @@ class _Scaffold extends StatelessWidget {
   final bool loading;
   final Iterable<DataRow> rows;
   final Widget? filter;
+  final String? error;
+  final VoidCallback? onRefresh;
   @override
   Widget build(BuildContext c) => Padding(
     padding: const EdgeInsets.all(22),
@@ -1881,7 +1897,7 @@ class _Scaffold extends StatelessWidget {
               : 'Centro Veterinario • Gestión clínica',
           title: title,
           subtitle: type == 'propietarios'
-              ? 'Administra tutores, contactos y las mascotas a su cargo.'
+              ? 'Cuentas de la app móvil y propietarios registrados manualmente.'
               : 'Administra los registros clínicos y el seguimiento de tus pacientes.',
           icon: type == 'propietarios'
               ? Icons.groups_2_outlined
@@ -1890,11 +1906,15 @@ class _Scaffold extends StatelessWidget {
             onPressed: onAdd,
             icon: const Icon(Icons.add),
             label: Text(
-              type == 'propietarios' ? 'Nuevo propietario' : 'Nuevo registro',
+              type == 'propietarios' ? 'Nuevo propietario manual' : 'Nuevo registro',
             ),
           ),
         ),
         const SizedBox(height: 18),
+        if (error != null) ...[
+          Text(error!, style: TextStyle(color: Theme.of(c).colorScheme.error)),
+          const SizedBox(height: 12),
+        ],
         Row(
           children: [
             Expanded(
@@ -1908,6 +1928,12 @@ class _Scaffold extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             if (filter != null) ...[filter!, const SizedBox(width: 12)],
+            if (onRefresh != null)
+              IconButton(
+                onPressed: onRefresh,
+                icon: const Icon(Icons.refresh),
+                tooltip: 'Actualizar listado',
+              ),
           ],
         ),
         const SizedBox(height: 18),
@@ -1919,7 +1945,15 @@ class _Scaffold extends StatelessWidget {
               : SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
-                    columns: [
+                    columns: type == 'propietarios'
+                        ? const [
+                            DataColumn(label: Text('Nombre / origen')),
+                            DataColumn(label: Text('Teléfono')),
+                            DataColumn(label: Text('Correo')),
+                            DataColumn(label: Text('Dirección')),
+                            DataColumn(label: Text('Acciones')),
+                          ]
+                        : [
                       DataColumn(
                         label: Text(
                           type == 'mascotas' ? 'MASCOTA' : 'MASCOTA / NOMBRE',
@@ -1929,7 +1963,7 @@ class _Scaffold extends StatelessWidget {
                       DataColumn(label: Text('Fecha')),
                       DataColumn(label: Text('Estado')),
                       DataColumn(label: Text('Acciones')),
-                    ],
+                          ],
                     rows: rows.toList(),
                   ),
                 ),
@@ -2044,9 +2078,9 @@ Future<void> _petDialog(
   List<Owner> owners, [
   AdminPet? x,
 ]) async {
-  if (owners.isEmpty) {
+  if (owners.isEmpty && x == null) {
     ScaffoldMessenger.of(c).showSnackBar(
-      const SnackBar(content: Text('Registra primero un propietario.')),
+      const SnackBar(content: Text('Registra primero un cliente o propietario.')),
     );
     return;
   }
@@ -2056,7 +2090,9 @@ Future<void> _petDialog(
       br = TextEditingController(text: x?.breed),
       se = TextEditingController(text: x?.sex),
       w = TextEditingController(text: x?.weight?.toString());
-  String owner = x?.ownerId ?? owners.first.id!;
+  String owner = x?.ownerId ?? owners.firstOrNull?.id ?? '';
+  bool saving = false;
+  String? saveError;
   await showDialog(
     context: c,
     builder: (d) => StatefulBuilder(
@@ -2068,17 +2104,30 @@ Future<void> _petDialog(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                DropdownButtonFormField(
-                  initialValue: owner,
-                  items: owners
-                      .map(
-                        (o) =>
-                            DropdownMenuItem(value: o.id!, child: Text(o.name)),
-                      )
-                      .toList(),
-                  onChanged: (v) => set(() => owner = v!),
-                  decoration: const InputDecoration(labelText: 'Propietario'),
-                ),
+                if (x?.clientId != null)
+                  InputDecorator(
+                    decoration: const InputDecoration(
+                      labelText: 'Cliente de la app móvil',
+                    ),
+                    child: Text(
+                      x!.ownerName.isEmpty
+                          ? 'Cuenta móvil vinculada'
+                          : x.ownerName,
+                    ),
+                  )
+                else
+                  DropdownButtonFormField<String>(
+                    initialValue: owner.isEmpty ? null : owner,
+                    items: owners
+                        .map((o) => DropdownMenuItem(
+                              value: o.id!,
+                              child: Text('${o.name} · ${o.isClientAccount ? 'App móvil' : 'Manual'}${o.isClientAccount && o.email.isNotEmpty ? ' (${o.email})' : ''}'),
+                            ))
+                        .toList(),
+                    onChanged: (v) => set(() => owner = v ?? ''),
+                    decoration: const InputDecoration(labelText: 'Cliente o propietario'),
+                    validator: (v) => v == null ? 'Selecciona un cliente o propietario' : null,
+                  ),
                 TextFormField(
                   controller: n,
                   decoration: const InputDecoration(labelText: 'Nombre'),
@@ -2101,6 +2150,10 @@ Future<void> _petDialog(
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(labelText: 'Peso (kg)'),
                 ),
+                if (saveError != null) ...[
+                  const SizedBox(height: 12),
+                  Text(saveError!, style: TextStyle(color: Theme.of(d).colorScheme.error)),
+                ],
               ],
             ),
           ),
@@ -2111,23 +2164,34 @@ Future<void> _petDialog(
             child: const Text('Cancelar'),
           ),
           FilledButton(
-            onPressed: () async {
+            onPressed: saving ? null : () async {
               if (f.currentState!.validate()) {
-                await a.save(
-                  AdminPet(
-                    id: x?.id,
-                    ownerId: owner,
-                    name: n.text,
-                    species: sp.text,
-                    breed: br.text,
-                    sex: se.text,
-                    weight: double.tryParse(w.text),
-                  ),
-                );
-                if (d.mounted) Navigator.pop(d);
+                final selected = owners.where((o) => o.id == owner).firstOrNull;
+                final clientId = x?.clientId ??
+                    (selected?.isClientAccount == true ? selected!.id : null);
+                set(() { saving = true; saveError = null; });
+                try {
+                  await a.save(
+                    AdminPet(
+                      id: x?.id,
+                      ownerId: clientId == null ? owner : '',
+                      clientId: clientId,
+                      name: n.text,
+                      species: sp.text,
+                      breed: br.text,
+                      sex: se.text,
+                      weight: double.tryParse(w.text),
+                    ),
+                  );
+                  if (d.mounted) Navigator.pop(d);
+                } catch (error) {
+                  if (d.mounted) set(() => saveError = 'No se pudo guardar: $error');
+                } finally {
+                  if (d.mounted) set(() => saving = false);
+                }
               }
             },
-            child: const Text('Guardar'),
+            child: Text(saving ? 'Guardando...' : 'Guardar'),
           ),
         ],
       ),
@@ -2152,25 +2216,74 @@ Future<void> _recordDialog(
   final f = GlobalKey<FormState>(),
       t = TextEditingController(text: x?.title),
       de = TextEditingController(text: x?.detail);
+  DateTime? appliedDate = x?.appliedDate;
+  DateTime? nextDoseDate = x?.date;
+  DateTime appointmentAt = x?.date ?? DateTime.now().add(const Duration(days: 1));
+  bool saving = false;
+  String? saveError;
   String pet = x?.petId ?? pets.first.id!,
       status = x?.status ?? (type == 'citas' ? 'Pendiente' : 'Activo');
   await showDialog(
     context: c,
     builder: (d) => StatefulBuilder(
       builder: (d, set) => AlertDialog(
-        title: Text(x == null ? 'Nuevo registro' : 'Editar registro'),
-        content: SingleChildScrollView(
+        icon: Icon(
+          type == 'vacunas'
+              ? Icons.vaccines_outlined
+              : type == 'citas' ? Icons.event_available_outlined : Icons.medical_services_outlined,
+          color: AdminTheme.emerald,
+        ),
+        title: Text(
+          type == 'vacunas'
+              ? (x == null ? 'Registrar vacuna' : 'Editar vacuna')
+              : type == 'citas'
+              ? (x == null ? 'Agendar cita' : 'Editar cita')
+              : type == 'tratamientos'
+              ? (x == null ? 'Registrar tratamiento' : 'Editar tratamiento')
+              : (x == null ? 'Nuevo registro' : 'Editar registro'),
+        ),
+        content: SizedBox(
+          width: 460,
+          child: SingleChildScrollView(
           child: Form(
             key: f,
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (type == 'vacunas') ...[
+                  const Text('Datos de vacunación', style: TextStyle(fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 4),
+                  const Text('Selecciona la mascota y registra la aplicación y su siguiente dosis.'),
+                  const SizedBox(height: 16),
+                ],
+                if (type == 'citas') ...[
+                  const Text('Datos de la cita', style: TextStyle(fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 4),
+                  const Text('Elige una mascota vinculada a un cliente para verla también en la app móvil.'),
+                  const SizedBox(height: 16),
+                ],
+                if (type == 'tratamientos') ...[
+                  const Text('Tratamiento para la mascota',
+                      style: TextStyle(fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 4),
+                  const Text('Aparecerá en Cuidados → Tratamientos. Para registrar una vacuna, usa la pestaña Vacunas.'),
+                  const SizedBox(height: 16),
+                ],
                 DropdownButtonFormField(
                   initialValue: pet,
                   items: pets
                       .map(
                         (p) =>
-                            DropdownMenuItem(value: p.id!, child: Text(p.name)),
+                            DropdownMenuItem(
+                              value: p.id!,
+                              child: Text(
+                                p.clientId == null
+                                    ? '${p.name} · ${p.ownerName.isEmpty ? 'sin cuenta móvil' : p.ownerName}'
+                                    : '${p.name} · cliente ${p.clientId!.substring(0, 8)}',
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                       )
                       .toList(),
                   onChanged: (v) => set(() => pet = v!),
@@ -2181,37 +2294,95 @@ Future<void> _recordDialog(
                   decoration: InputDecoration(
                     labelText: type == 'citas' || type == 'consultas'
                         ? 'Motivo'
-                        : 'Nombre',
+                        : type == 'vacunas' ? 'Nombre de la vacuna' : 'Nombre',
+                    prefixIcon: type == 'vacunas' ? const Icon(Icons.vaccines_outlined) : null,
                   ),
                   validator: (v) => AdminValidators.required(v),
                 ),
+                if (type == 'vacunas') ...[
+                  const SizedBox(height: 12),
+                  _VaccineDateField(
+                    label: 'Fecha de aplicación',
+                    value: appliedDate,
+                    onChanged: (value) => set(() => appliedDate = value),
+                  ),
+                  const SizedBox(height: 10),
+                  _VaccineDateField(
+                    label: 'Próxima dosis',
+                    value: nextDoseDate,
+                    onChanged: (value) => set(() => nextDoseDate = value),
+                    allowClear: true,
+                  ),
+                ],
+                if (type == 'citas') ...[
+                  const SizedBox(height: 12),
+                  _VaccineDateField(
+                    label: 'Fecha de la cita',
+                    value: appointmentAt,
+                    onChanged: (value) {
+                      if (value != null) {
+                        set(() => appointmentAt = DateTime(
+                          value.year, value.month, value.day,
+                          appointmentAt.hour, appointmentAt.minute,
+                        ));
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      final selected = await showTimePicker(
+                        context: d,
+                        initialTime: TimeOfDay.fromDateTime(appointmentAt),
+                      );
+                      if (selected != null) {
+                        set(() => appointmentAt = DateTime(
+                          appointmentAt.year, appointmentAt.month,
+                          appointmentAt.day, selected.hour, selected.minute,
+                        ));
+                      }
+                    },
+                    icon: const Icon(Icons.schedule_outlined),
+                    label: Text('Hora: ${appointmentAt.hour.toString().padLeft(2, '0')}:${appointmentAt.minute.toString().padLeft(2, '0')}'),
+                  ),
+                ],
                 TextFormField(
                   controller: de,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: 'Indicaciones / observaciones',
+                  maxLines: type == 'vacunas' ? 4 : 3,
+                  decoration: InputDecoration(
+                    labelText: type == 'vacunas' ? 'Indicaciones y observaciones' : 'Indicaciones / observaciones',
+                    alignLabelWithHint: true,
+                    prefixIcon: const Icon(Icons.notes_outlined),
                   ),
                 ),
                 DropdownButtonFormField(
                   initialValue: status,
                   items:
-                      (type == 'citas'
+                    (type == 'citas'
                               ? [
                                   'Pendiente',
                                   'Confirmada',
                                   'Atendida',
                                   'Cancelada',
                                 ]
+                              : type == 'vacunas'
+                              ? ['Pendiente', 'Aplicada', 'Completa', 'Vencida']
                               : ['Activo', 'Finalizado'])
                           .map(
                             (s) => DropdownMenuItem(value: s, child: Text(s)),
                           )
                           .toList(),
                   onChanged: (v) => set(() => status = v!),
-                  decoration: const InputDecoration(labelText: 'Estado'),
+                  decoration: InputDecoration(labelText: type == 'vacunas'
+                      ? 'Estado de la vacuna' : 'Estado'),
                 ),
+                if (saveError != null) ...[
+                  const SizedBox(height: 12),
+                  Text(saveError!, style: TextStyle(color: Theme.of(d).colorScheme.error)),
+                ],
               ],
             ),
+          ),
           ),
         ),
         actions: [
@@ -2220,27 +2391,106 @@ Future<void> _recordDialog(
             child: const Text('Cancelar'),
           ),
           FilledButton(
-            onPressed: () async {
+          onPressed: saving ? null : () async {
               if (f.currentState!.validate()) {
                 final p = pets.firstWhere((e) => e.id == pet);
-                await a.save(
-                  AdminRecord(
-                    id: x?.id,
-                    petId: pet,
-                    ownerId: p.ownerId,
-                    title: t.text,
-                    detail: de.text,
-                    status: status,
-                    date: DateTime.now(),
-                  ),
-                );
-                if (d.mounted) Navigator.pop(d);
+                if (type == 'citas' && appointmentAt.isBefore(DateTime.now()) &&
+                    (x?.date == null || !appointmentAt.isAtSameMomentAs(x!.date!))) {
+                  set(() => saveError = 'Selecciona una fecha y hora futuras.');
+                  return;
+                }
+                set(() { saving = true; saveError = null; });
+                try {
+                  await a.save(
+                    AdminRecord(
+                      id: x?.id,
+                      petId: pet,
+                      ownerId: p.ownerId,
+                      clientId: p.clientId,
+                      title: t.text.trim(),
+                      detail: de.text.trim(),
+                      status: status,
+                      date: type == 'vacunas'
+                          ? nextDoseDate
+                          : type == 'citas' ? appointmentAt : DateTime.now(),
+                      appliedDate: type == 'vacunas' ? appliedDate : null,
+                    ),
+                  );
+                  if (d.mounted) Navigator.pop(d);
+                  if (c.mounted) {
+                    ScaffoldMessenger.of(c).showSnackBar(
+                      SnackBar(content: Text(
+                        p.clientId == null && (type == 'vacunas' || type == 'citas')
+                            ? 'Registro guardado. Esta mascota no está vinculada a una cuenta móvil.'
+                            : type == 'vacunas'
+                                ? 'Vacuna guardada para ${p.name}.'
+                                : 'Registro guardado.',
+                      )),
+                    );
+                  }
+                } catch (error) {
+                  if (d.mounted) {
+                    set(() => saveError = 'No se pudo guardar: $error');
+                  }
+                } finally {
+                  if (d.mounted) set(() => saving = false);
+                }
               }
             },
-            child: const Text('Guardar'),
+            child: Text(saving ? 'Guardando...' : 'Guardar'),
           ),
         ],
       ),
     ),
   );
+}
+
+class _VaccineDateField extends StatelessWidget {
+  const _VaccineDateField({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+    this.allowClear = false,
+  });
+
+  final String label;
+  final DateTime? value;
+  final ValueChanged<DateTime?> onChanged;
+  final bool allowClear;
+
+  @override
+  Widget build(BuildContext context) {
+    final dateText = value == null
+        ? 'Seleccionar fecha'
+        : '${value!.day.toString().padLeft(2, '0')}/${value!.month.toString().padLeft(2, '0')}/${value!.year}';
+    return InputDecorator(
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: const Icon(Icons.calendar_month_outlined),
+        suffixIcon: allowClear && value != null
+            ? IconButton(
+                tooltip: 'Quitar fecha',
+                onPressed: () => onChanged(null),
+                icon: const Icon(Icons.close),
+              )
+            : null,
+      ),
+      child: InkWell(
+        onTap: () async {
+          final now = DateTime.now();
+          final selected = await showDatePicker(
+            context: context,
+            initialDate: value ?? now,
+            firstDate: DateTime(now.year - 20),
+            lastDate: DateTime(now.year + 30),
+          );
+          if (selected != null) onChanged(selected);
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Text(dateText),
+        ),
+      ),
+    );
+  }
 }

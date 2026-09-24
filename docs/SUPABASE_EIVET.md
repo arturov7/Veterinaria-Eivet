@@ -9,8 +9,28 @@ Ejecuta los scripts SQL desde el editor SQL de Supabase en este orden:
 1. `supabase/01_SCHEMA_RLS.sql`
 2. `supabase/02_MASCOTAS_CRUD_RLS.sql`
 3. `supabase/05_ADMIN_WEB_SCHEMA_RLS.sql`
+4. `supabase/06_VINCULAR_CITAS_CLIENTES.sql`
+5. `supabase/09_TRATAMIENTOS_CLIENTES_RLS.sql`
+6. `supabase/10_CLIENTES_EN_PANEL.sql`
 
 `supabase/04_DATOS_EJEMPLO_CUIDADOS.sql` es opcional y requiere un usuario y una mascota existentes. Las tablas esperadas son `clientes`, `mascotas`, `servicios`, `citas`, `vacunas`, `historiales_clinicos`, `notificaciones`, `perfiles`, `propietarios`, `consultas` y `tratamientos`. `perfiles` almacena el nombre, correo y rol del personal; las contraseñas permanecen en Supabase Auth.
+
+## Clientes y propietarios
+
+Una cuenta creada en **Authentication > Users** tiene un ID de Auth. El disparador `crear_cliente` crea su fila en `public.clientes` con ese mismo ID. Esa cuenta puede iniciar sesión en la app móvil y sus mascotas se vinculan con `mascotas.cliente_id`. El script `10_CLIENTES_EN_PANEL.sql` agrega el correo a `clientes`, recupera las cuentas de Auth ya existentes y permite que el personal las vea en **Clientes y propietarios**. Ejecuta el script en SQL Editor y recarga el panel web.
+
+Un **propietario manual** creado desde el panel se guarda en `public.propietarios`. Es una ficha de contacto sin contraseña ni acceso a la app móvil; sus mascotas se vinculan con `mascotas.propietario_id`. En el listado, la etiqueta **App móvil** identifica las cuentas de `clientes` y la etiqueta **Manual** identifica las fichas de `propietarios`. Al crear una mascota desde la web, selecciona la cuenta **App móvil** correcta si quieres que esa mascota aparezca al iniciar sesión con esa cuenta en el teléfono.
+
+Para revisar la vinculación en SQL Editor:
+
+```sql
+select c.id, c.nombre, c.correo, m.nombre as mascota
+from public.clientes c
+left join public.mascotas m on m.cliente_id = c.id
+order by c.nombre, m.nombre;
+```
+
+Para diagnosticar la sincronización, ejecuta la consulta única `supabase/08_DIAGNOSTICO_VACUNAS_CITAS.sql`. Una mascota puede existir aunque no haya ninguna fila guardada en `vacunas` o `citas`. Si `citas_guardadas` es mayor que cero pero `citas_visibles_para_cliente` es cero, aplica primero `supabase/06_VINCULAR_CITAS_CLIENTES.sql`.
 
 Los archivos SQL declaran el esquema esperado; comprueba en Supabase que la ejecución haya terminado y que las tablas y políticas estén presentes.
 

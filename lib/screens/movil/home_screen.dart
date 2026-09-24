@@ -8,6 +8,7 @@ import 'appointments_screen.dart';
 import 'pet_care_screen.dart';
 import 'records_screen.dart';
 import 'settings_screen.dart';
+import '../../core/movil/app_theme.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,37 +31,44 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(child: pages[_selectedIndex]),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
-        height: 76,
-        backgroundColor: const Color(0xFF06322B),
-        indicatorColor: const Color(0xFFACF4A4),
+        height: 72,
+        backgroundColor: Colors.white,
+        indicatorColor: const Color(0xFFDDEFE3),
         surfaceTintColor: Colors.transparent,
+        elevation: 8,
+        shadowColor: AppTheme.darkGreen.withValues(alpha: .12),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        labelTextStyle: WidgetStateProperty.resolveWith((states) => TextStyle(
+          color: states.contains(WidgetState.selected) ? AppTheme.primary : const Color(0xFF607067),
+          fontSize: 11,
+          fontWeight: states.contains(WidgetState.selected) ? FontWeight.w700 : FontWeight.w500,
+        )),
         onDestinationSelected: (index) =>
             setState(() => _selectedIndex = index),
         destinations: const <NavigationDestination>[
           NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined, color: Color(0xFF607067)),
+            selectedIcon: Icon(Icons.home, color: Color(0xFF006E1C)),
             label: 'Inicio',
           ),
           NavigationDestination(
-            icon: Icon(Icons.calendar_month_outlined),
-            selectedIcon: Icon(Icons.calendar_month),
+            icon: Icon(Icons.pets_outlined, color: Color(0xFF607067)),
+            selectedIcon: Icon(Icons.pets, color: Color(0xFF006E1C)),
             label: 'Mis mascotas',
           ),
           NavigationDestination(
-            icon: Icon(Icons.health_and_safety_outlined),
-            selectedIcon: Icon(Icons.health_and_safety),
+            icon: Icon(Icons.health_and_safety_outlined, color: Color(0xFF607067)),
+            selectedIcon: Icon(Icons.health_and_safety, color: Color(0xFF006E1C)),
             label: 'Cuidados',
           ),
           NavigationDestination(
-            icon: Icon(Icons.event_note_outlined),
-            selectedIcon: Icon(Icons.event_note),
+            icon: Icon(Icons.event_note_outlined, color: Color(0xFF607067)),
+            selectedIcon: Icon(Icons.event_note, color: Color(0xFF006E1C)),
             label: 'Citas',
           ),
           NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
+            icon: Icon(Icons.person_outline, color: Color(0xFF607067)),
+            selectedIcon: Icon(Icons.person, color: Color(0xFF006E1C)),
             label: 'Perfil',
           ),
         ],

@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../services/movil/auth_service.dart';
-import 'home_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -36,12 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _busy = true);
     try {
       await _auth.signIn(_email.text, _password.text);
-      if (mounted) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
-          (_) => false,
-        );
-      }
     } catch (_) {
       if (mounted) _message('Correo o contraseña incorrectos. Intenta nuevamente.');
     } finally {

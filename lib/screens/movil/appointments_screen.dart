@@ -40,11 +40,11 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
           _items = results[0] as List<AppointmentRequest>;
           _pets = results[1] as List<Registro>;
         });
-    } catch (_) {
+    } catch (error) {
       if (mounted)
         setState(
           () => _error =
-              'No se pudieron cargar las solicitudes. Inténtalo nuevamente.',
+              'No se pudieron cargar las solicitudes: $error',
         );
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -109,12 +109,14 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 4),
-                child: Text(
-                  'Solicitudes de citas',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
-                ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+                child: Row(children: [
+                  const Expanded(child: Text('Solicitudes de citas',
+                      style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800))),
+                  IconButton(onPressed: _load, tooltip: 'Actualizar citas',
+                      icon: const Icon(Icons.refresh)),
+                ]),
               ),
               const Padding(
                 padding: EdgeInsets.fromLTRB(20, 0, 20, 8),
@@ -137,10 +139,14 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
     if (_loading) return const Center(child: CircularProgressIndicator());
     if (_error != null)
       return Center(
-        child: FilledButton.icon(
-          onPressed: _load,
-          icon: const Icon(Icons.refresh),
-          label: const Text('Reintentar'),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text(_error!, textAlign: TextAlign.center),
+            const SizedBox(height: 12),
+            FilledButton.icon(onPressed: _load,
+                icon: const Icon(Icons.refresh), label: const Text('Reintentar')),
+          ]),
         ),
       );
     return RefreshIndicator(

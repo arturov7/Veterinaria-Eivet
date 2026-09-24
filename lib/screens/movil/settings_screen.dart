@@ -5,7 +5,6 @@ import '../../core/utils/app_config.dart';
 import '../../controllers/movil/preferences_controller.dart';
 import '../../services/movil/auth_service.dart';
 import 'about_adaptation_screen.dart';
-import 'login_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key, this.embedded = false});
@@ -38,12 +37,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (confirmed != true || !mounted) return;
     try {
       await AuthService().signOut();
-      if (mounted) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute<void>(builder: (_) => const LoginScreen()),
-          (_) => false,
-        );
-      }
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -79,7 +72,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _content() {
     final preferences = context.watch<PreferencesController>();
-    final config = context.watch<AppConfig>();
+    final isAuthenticated = context.read<AppConfig>().useSupabase &&
+        AuthService().isAuthenticated();
+    final email = isAuthenticated ? AuthService().getCurrentUser()?.email : null;
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
       children: <Widget>[
@@ -88,7 +83,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: 4),
-        const Text('Personaliza tu experiencia en EIVET.'),
+        Text(email == null
+            ? 'Personaliza tu experiencia en EIVET.'
+            : 'Sesión iniciada: $email'),
         const SizedBox(height: 22),
         Center(
           child: CircleAvatar(
@@ -136,7 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ListTile(
                 leading: const Icon(Icons.settings_ethernet_outlined),
                 title: const Text('Fuente de datos'),
-                subtitle: Text(config.modeLabel),
+              subtitle: Text(isAuthenticated ? 'Cuenta conectada' : 'Modo de demostración'),
               ),
               const Divider(height: 1),
               ListTile(
@@ -154,7 +151,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ),
-        if (config.useSupabase) ...[
+        if (isAuthenticated) ...[
           const SizedBox(height: 22),
           OutlinedButton.icon(
             onPressed: _signOut,

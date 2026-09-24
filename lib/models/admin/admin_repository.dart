@@ -117,27 +117,47 @@ class SupabaseAdminRepository implements AdminRepository {
     T Function(Map<String, dynamic>) f, [
     String? select,
   ]) async {
-    final r = await _db
-        .from(table)
-        .select(select ?? '*')
-        .order('created_at', ascending: false);
-    return (r as List).map((e) => f(Map<String, dynamic>.from(e))).toList();
+    final ordered = table == 'vacunas'
+        ? await _db.from(table).select(select ?? '*').order('proxima_dosis', ascending: true)
+        : await _db.from(table).select(select ?? '*').order('created_at', ascending: false);
+    return (ordered as List).map((e) => f(Map<String, dynamic>.from(e))).toList();
   }
 
   Future<void> _save(String t, String? id, Map<String, dynamic> m) =>
       id == null ? _db.from(t).insert(m) : _db.from(t).update(m).eq('id', id);
   @override
-  Future<List<Owner>> owners() => _list('propietarios', Owner.fromMap);
+  Future<List<Owner>> owners() async {
+    final manual = await _list('propietarios', Owner.fromMap);
+    final accounts = await _list(
+      'clientes',
+      Owner.fromClientMap,
+      'id,nombre,telefono,direccion,correo,created_at',
+    );
+    return [...accounts, ...manual];
+  }
   @override
   Future<void> saveOwner(Owner v) => _save('propietarios', v.id, v.toMap());
   @override
   Future<void> deleteOwner(String id) =>
       _db.from('propietarios').delete().eq('id', id);
   @override
-  Future<List<AdminPet>> pets() =>
-      _list('mascotas', AdminPet.fromMap, '*, propietarios(nombre_completo)');
+  Future<List<AdminPet>> pets() async {
+    final rows = await _db
+        .from('mascotas')
+        .select('*, propietarios(nombre_completo), clientes(nombre)')
+        .order('created_at', ascending: false);
+    return (rows as List)
+        .map((row) => AdminPet.fromMap(Map<String, dynamic>.from(row)))
+        .toList(growable: false);
+  }
   @override
-  Future<void> savePet(AdminPet v) => _save('mascotas', v.id, v.toMap());
+  Future<void> savePet(AdminPet v) async {
+    if (v.id == null) {
+      await _db.from('mascotas').insert(v.toMap()).select('id').single();
+    } else {
+      await _db.from('mascotas').update(v.toMap()).eq('id', v.id!).select('id').single();
+    }
+  }
   @override
   Future<void> deletePet(String id) =>
       _db.from('mascotas').delete().eq('id', id);
@@ -152,8 +172,14 @@ class SupabaseAdminRepository implements AdminRepository {
         : '*, mascotas(nombre)',
   );
   @override
-  Future<void> saveRecord(String t, AdminRecord v) =>
-      _save(t, v.id, v.toMap(t));
+  Future<void> saveRecord(String t, AdminRecord v) async {
+    final values = v.toMap(t);
+    if (v.id == null) {
+      await _db.from(t).insert(values).select('id').single();
+    } else {
+      await _db.from(t).update(values).eq('id', v.id!).select('id').single();
+    }
+  }
   @override
   Future<void> deleteRecord(String t, String id) =>
       _db.from(t).delete().eq('id', id);

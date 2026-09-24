@@ -6,9 +6,11 @@ class Owner {
     this.phone = '',
     this.email = '',
     this.address = '',
+    this.isClientAccount = false,
   });
   final String? id;
   final String name, ci, phone, email, address;
+  final bool isClientAccount;
   factory Owner.fromMap(Map<String, dynamic> m) => Owner(
     id: m['id']?.toString(),
     name: m['nombre_completo']?.toString() ?? '',
@@ -16,6 +18,14 @@ class Owner {
     phone: m['telefono']?.toString() ?? '',
     email: m['correo']?.toString() ?? '',
     address: m['direccion']?.toString() ?? '',
+  );
+  factory Owner.fromClientMap(Map<String, dynamic> m) => Owner(
+    id: m['id']?.toString(),
+    name: m['nombre']?.toString() ?? '',
+    phone: m['telefono']?.toString() ?? '',
+    email: m['correo']?.toString() ?? '',
+    address: m['direccion']?.toString() ?? '',
+    isClientAccount: true,
   );
   Map<String, dynamic> toMap() => {
     'nombre_completo': name.trim(),
@@ -39,16 +49,20 @@ class AdminPet {
     this.color = '',
     this.notes = '',
     this.ownerName = '',
+    this.clientId,
   });
   final String? id;
   final String ownerId, name, species, breed, sex, color, notes, ownerName;
+  final String? clientId;
   final DateTime? birthDate;
   final double? weight;
   factory AdminPet.fromMap(Map<String, dynamic> m) {
     final o = m['propietarios'];
+    final client = m['clientes'];
     return AdminPet(
       id: m['id']?.toString(),
       ownerId: m['propietario_id']?.toString() ?? '',
+      clientId: m['cliente_id']?.toString(),
       name: m['nombre']?.toString() ?? '',
       species: m['especie']?.toString() ?? '',
       breed: m['raza']?.toString() ?? '',
@@ -57,11 +71,14 @@ class AdminPet {
       weight: double.tryParse(m['peso']?.toString() ?? ''),
       color: m['color']?.toString() ?? '',
       notes: m['observaciones']?.toString() ?? '',
-      ownerName: o is Map ? o['nombre_completo']?.toString() ?? '' : '',
+      ownerName: o is Map
+          ? o['nombre_completo']?.toString() ?? ''
+          : client is Map ? client['nombre']?.toString() ?? '' : '',
     );
   }
   Map<String, dynamic> toMap() => {
-    'propietario_id': ownerId,
+    'propietario_id': ownerId.isEmpty ? null : ownerId,
+    'cliente_id': clientId,
     'nombre': name.trim(),
     'especie': species.trim(),
     'raza': breed.trim(),
@@ -88,6 +105,8 @@ class AdminRecord {
     this.status = '',
     this.petName = '',
     this.ownerName = '',
+    this.appliedDate,
+    this.clientId,
   });
   final String? id;
   final String petId,
@@ -99,6 +118,8 @@ class AdminRecord {
       petName,
       ownerName;
   final DateTime? date;
+  final DateTime? appliedDate;
+  final String? clientId;
   factory AdminRecord.fromMap(Map<String, dynamic> m, {required String type}) {
     final p = m['mascotas'];
     final o = m['propietarios'];
@@ -111,6 +132,7 @@ class AdminRecord {
       id: m['id']?.toString(),
       petId: m['mascota_id']?.toString() ?? '',
       ownerId: m['propietario_id']?.toString() ?? '',
+      clientId: m['cliente_id']?.toString(),
       relatedId:
           m[type == 'tratamientos' ? 'consulta_id' : '']?.toString() ?? '',
       title: title?.toString() ?? '',
@@ -128,6 +150,9 @@ class AdminRecord {
                 '')
             .toString(),
       ),
+      appliedDate: type == 'vacunas'
+          ? DateTime.tryParse(m['fecha_aplicacion']?.toString() ?? '')
+          : null,
       status: m['estado']?.toString() ?? '',
       petName: p is Map ? p['nombre']?.toString() ?? '' : '',
       ownerName: o is Map ? o['nombre_completo']?.toString() ?? '' : '',
@@ -137,7 +162,8 @@ class AdminRecord {
     final map = <String, dynamic>{'mascota_id': petId};
     if (type == 'citas') {
       map.addAll({
-        'propietario_id': ownerId,
+        'propietario_id': ownerId.isEmpty ? null : ownerId,
+        'cliente_id': clientId,
         'fecha_hora': date?.toIso8601String(),
         'motivo': title,
         'estado': status,
@@ -161,6 +187,7 @@ class AdminRecord {
     } else {
       map.addAll({
         'nombre': title,
+        'fecha_aplicacion': appliedDate?.toIso8601String().split('T').first,
         'proxima_dosis': date?.toIso8601String().split('T').first,
         'observaciones': detail,
       });

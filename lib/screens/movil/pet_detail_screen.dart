@@ -101,7 +101,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                   _treatments
                       .map(
                         (item) =>
-                            '${item['tratamiento'] ?? 'Sin tratamiento'}\n${item['indicaciones'] ?? 'Sin indicaciones'}\nPróximo control: ${_date(item['proximo_control'])}',
+                            '${item['tratamiento'] ?? 'Sin tratamiento'}\n${item['indicaciones'] ?? 'Sin indicaciones'}\n${item['fecha_fin'] != null ? 'Fin previsto: ${_date(item['fecha_fin'])}' : 'Próximo control: ${_date(item['proximo_control'])}'}',
                       )
                       .toList(),
                   'No hay tratamientos autorizados.',

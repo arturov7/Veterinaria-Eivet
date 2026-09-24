@@ -39,6 +39,21 @@ Future<void> main() async {
   final preferencesController = PreferencesController(
     PreferencesService(prefs),
   );
+  if (config.useSupabase) {
+    final user = Supabase.instance.client.auth.currentUser;
+    preferencesController.switchUser(
+      user?.id,
+      defaultName: user?.userMetadata?['full_name']?.toString(),
+    );
+    Supabase.instance.client.auth.onAuthStateChange.listen((state) {
+      preferencesController.switchUser(
+        state.session?.user.id,
+        defaultName: state.session?.user.userMetadata?['full_name']?.toString(),
+      );
+    });
+  } else {
+    preferencesController.switchUser('demo');
+  }
 
   final httpClient = http.Client();
   final RegistroRepository repository = config.useSupabase

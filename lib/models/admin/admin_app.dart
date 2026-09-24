@@ -19,7 +19,14 @@ class AdminApp extends StatelessWidget {
     debugShowCheckedModeBanner: false,
     title: 'EIVET Administración',
     theme: AdminTheme.light(),
-    home: const _Gate(),
+    home: c.read<AppConfig>().requestedMode == AppMode.supabase &&
+            !c.read<AppConfig>().useSupabase
+        ? const Scaffold(
+            body: Center(
+              child: Text('Configura Supabase con --dart-define-from-file=config/local.json para abrir el panel.'),
+            ),
+          )
+        : const _Gate(),
   );
 }
 
@@ -41,9 +48,23 @@ class _ShellState extends State<_Shell> {
   int index = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<OwnersController>().load();
+      context.read<PetsController>().load();
+      context.read<AppointmentsController>().load();
+      context.read<ConsultationsController>().load();
+      context.read<TreatmentsController>().load();
+      context.read<VaccinesController>().load();
+    });
+  }
+  @override
   Widget build(BuildContext c) {
     final auth = c.watch<AdminAuthController>();
-    final wide = MediaQuery.sizeOf(c).width >= 900;
+    final config = c.watch<AppConfig>();
+    final wide = MediaQuery.sizeOf(c).width >= 1100;
     final screens = [
       const AdminDashboardScreen(),
       RecordsScreen(
@@ -85,7 +106,7 @@ class _ShellState extends State<_Shell> {
       drawer: wide
           ? null
           : Drawer(
-              width: 280,
+              width: 304,
               child: AdminSidebar(
                 index: safeIndex,
                 name: auth.name,
@@ -107,10 +128,12 @@ class _ShellState extends State<_Shell> {
               children: [
                 _AdminTopBar(
                   title: AdminSidebar.labels[safeIndex],
+                  dataMode: config.useSupabase ? 'SUPABASE' : 'DEMO',
                   showMenu: !wide,
                   name: auth.name,
                   onMenu: () => _scaffoldKey.currentState?.openDrawer(),
                   onNewConsultation: () => setState(() => index = 4),
+                  onLogout: auth.logout,
                 ),
                 Expanded(
                   child: screens[safeIndex] is AdminDashboardScreen
@@ -134,18 +157,21 @@ class _ShellState extends State<_Shell> {
 class _AdminTopBar extends StatelessWidget {
   const _AdminTopBar({
     required this.title,
+    required this.dataMode,
     required this.showMenu,
     required this.name,
     required this.onMenu,
     required this.onNewConsultation,
+    required this.onLogout,
   });
-  final String title, name;
+  final String title, name, dataMode;
   final bool showMenu;
   final VoidCallback onMenu;
   final VoidCallback onNewConsultation;
+  final VoidCallback onLogout;
   @override
   Widget build(BuildContext context) => Container(
-    height: 68,
+    height: 78,
     padding: const EdgeInsets.symmetric(horizontal: 22),
     decoration: const BoxDecoration(
       color: Colors.white,
@@ -157,13 +183,14 @@ class _AdminTopBar extends StatelessWidget {
           IconButton(onPressed: onMenu, icon: const Icon(Icons.menu)),
         if (showMenu) const SizedBox(width: 6),
         Expanded(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500),
+          flex: 5,
+          child: Semantics(
+            label: title,
             child: TextField(
               decoration: const InputDecoration(
                 hintText: 'Buscar en el panel…',
                 prefixIcon: Icon(Icons.search),
-                contentPadding: EdgeInsets.symmetric(vertical: 9),
+                contentPadding: EdgeInsets.symmetric(vertical: 11),
               ),
             ),
           ),
@@ -187,6 +214,26 @@ class _AdminTopBar extends StatelessWidget {
               ],
             ),
           ),
+        Container(
+          margin: const EdgeInsets.only(left: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+          decoration: BoxDecoration(
+            color: dataMode == 'SUPABASE'
+                ? const Color(0xffe8f5ee)
+                : const Color(0xfffff4d6),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            dataMode,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              color: dataMode == 'SUPABASE'
+                  ? const Color(0xff167044)
+                  : const Color(0xff8a5b00),
+            ),
+          ),
+        ),
         IconButton(
           onPressed: () {},
           tooltip: 'Notificaciones',
@@ -204,18 +251,37 @@ class _AdminTopBar extends StatelessWidget {
           ),
         ],
         const SizedBox(width: 4),
-        const EivetLogo(size: 36),
-        if (MediaQuery.sizeOf(context).width > 700) ...[
-          const SizedBox(width: 9),
-          Text(
-            name,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xff0b1c30),
-              fontWeight: FontWeight.w600,
-            ),
+        PopupMenuButton<String>(
+          tooltip: 'Cuenta personal',
+          onSelected: (value) {
+            if (value == 'logout') onLogout();
+          },
+          itemBuilder: (context) => const [
+            PopupMenuItem(value: 'logout', child: Text('Cerrar sesión')),
+          ],
+          child: Row(
+            children: [
+              const EivetLogo(size: 40),
+              if (MediaQuery.sizeOf(context).width > 700) ...[
+                const SizedBox(width: 9),
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xff0b1c30),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 3),
+                const Icon(
+                  Icons.keyboard_arrow_down,
+                  size: 18,
+                  color: AdminTheme.muted,
+                ),
+              ],
+            ],
           ),
-        ],
+        ),
       ],
     ),
   );
@@ -392,7 +458,7 @@ class _ReportsScreen extends StatelessWidget {
                 : 1;
             final metrics = [
               (
-                'Propietarios',
+                'Clientes y propietarios',
                 owners,
                 Icons.groups_outlined,
                 const Color(0xffe3f7ed),
@@ -525,11 +591,11 @@ List<dynamic> adminProviders(AppConfig config) {
   return [
     Provider<AdminRepository>.value(value: r),
     ChangeNotifierProvider(create: (_) => AdminAuthController(config)),
-    ChangeNotifierProvider(create: (_) => OwnersController(r)..load()),
-    ChangeNotifierProvider(create: (_) => PetsController(r)..load()),
-    ChangeNotifierProvider(create: (_) => AppointmentsController(r)..load()),
-    ChangeNotifierProvider(create: (_) => ConsultationsController(r)..load()),
-    ChangeNotifierProvider(create: (_) => TreatmentsController(r)..load()),
-    ChangeNotifierProvider(create: (_) => VaccinesController(r)..load()),
+    ChangeNotifierProvider(create: (_) => OwnersController(r)),
+    ChangeNotifierProvider(create: (_) => PetsController(r)),
+    ChangeNotifierProvider(create: (_) => AppointmentsController(r)),
+    ChangeNotifierProvider(create: (_) => ConsultationsController(r)),
+    ChangeNotifierProvider(create: (_) => TreatmentsController(r)),
+    ChangeNotifierProvider(create: (_) => VaccinesController(r)),
   ];
 }

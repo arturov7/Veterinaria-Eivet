@@ -28,4 +28,5 @@ flutter:
   assets:
     - assets/logo.png
     - assets/eivet_pets_hero.png
+    - assets/eivet_pets_hero_v2.png
     

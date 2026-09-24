@@ -10,15 +10,17 @@ class PreferencesService {
   static const String welcomeSeenKey = 'eivet_welcome_seen';
 
   bool getDarkMode() => preferences.getBool(darkModeKey) ?? false;
-  String getName() => preferences.getString(nameKey) ?? '';
+  String getName(String? userId) => userId == null
+      ? ''
+      : preferences.getString('${nameKey}_$userId') ?? '';
   bool getWelcomeSeen() => preferences.getBool(welcomeSeenKey) ?? false;
 
   Future<void> setDarkMode(bool value) {
     return preferences.setBool(darkModeKey, value);
   }
 
-  Future<void> setName(String value) {
-    return preferences.setString(nameKey, value.trim());
+  Future<void> setName(String userId, String value) {
+    return preferences.setString('${nameKey}_$userId', value.trim());
   }
 
   Future<void> setWelcomeSeen(bool value) {

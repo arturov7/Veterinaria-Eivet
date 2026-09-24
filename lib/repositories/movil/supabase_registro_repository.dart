@@ -5,7 +5,8 @@ class SupabaseRegistroRepository implements RegistroRepository {
 
   @override
   Future<List<Registro>> fetchAll() async {
-    final rows = await _client.from('mascotas').select().order('nombre');
+    final rows = await _client.from('mascotas').select()
+        .eq('cliente_id', _requireUserId()).order('nombre');
     return (rows as List)
         .map((r) => Registro.fromJson(Map<String, dynamic>.from(r as Map)))
         .toList();
@@ -21,9 +22,17 @@ class SupabaseRegistroRepository implements RegistroRepository {
   @override
   Future<void> update(Registro pet) async {
     if (pet.id == null) throw ArgumentError('La mascota no tiene identificador.');
-    await _client.from('mascotas').update(pet.toJson()).eq('id', pet.id!);
+    await _client.from('mascotas').update(pet.toJson())
+        .eq('id', pet.id!).eq('cliente_id', _requireUserId());
   }
 
   @override
-  Future<void> delete(String id) => _client.from('mascotas').delete().eq('id', id);
+  Future<void> delete(String id) => _client.from('mascotas').delete()
+      .eq('id', id).eq('cliente_id', _requireUserId());
+
+  String _requireUserId() {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) throw StateError('No hay una sesión activa.');
+    return userId;
+  }
 }

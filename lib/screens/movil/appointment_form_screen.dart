@@ -75,8 +75,8 @@ class _AppointmentFormScreenState extends State<AppointmentFormScreen> {
         scheduledAt: scheduledAt,
         reason: _reasonController.text,
         status: widget.initial == null
-            ? 'pendiente'
-            : 'reprogramación solicitada',
+            ? 'Pendiente'
+            : 'Reprogramada',
         createdAt: widget.initial?.createdAt,
       );
       final repository = context.read<AppointmentRepository>();

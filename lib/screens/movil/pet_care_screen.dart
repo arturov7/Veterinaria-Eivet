@@ -37,10 +37,10 @@ class _PetCareScreenState extends State<PetCareScreen> {
           _treatments = snapshot.treatments;
         });
       }
-    } catch (_) {
+    } catch (error) {
       if (mounted) {
         setState(
-          () => _error = 'No se pudieron cargar los cuidados de tus mascotas.',
+          () => _error = 'No se pudieron cargar los cuidados: $error',
         );
       }
     } finally {
@@ -60,11 +60,18 @@ class _PetCareScreenState extends State<PetCareScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 4),
-          child: Text(
-            'Cuidados y seguimiento',
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+          child: Row(
+            children: [
+              const Expanded(child: Text('Cuidados y seguimiento',
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800))),
+              IconButton(
+                onPressed: _load,
+                tooltip: 'Actualizar cuidados',
+                icon: const Icon(Icons.refresh),
+              ),
+            ],
           ),
         ),
         const Padding(
@@ -80,10 +87,20 @@ class _PetCareScreenState extends State<PetCareScreen> {
     if (_loading) return const Center(child: CircularProgressIndicator());
     if (_error != null) {
       return Center(
-        child: FilledButton.icon(
-          onPressed: _load,
-          icon: const Icon(Icons.refresh),
-          label: const Text('Reintentar'),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(_error!, textAlign: TextAlign.center),
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                onPressed: _load,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Reintentar'),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -212,7 +229,7 @@ class _VaccineCard extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.w800),
         ),
         subtitle: Text(
-          '$pet\nPróxima dosis: ${_formatDate(item['proxima_dosis'])}\nEstado: ${item['estado'] ?? 'Pendiente'}',
+          '$pet\nAplicada: ${_formatDate(item['fecha_aplicacion'])}\nPróxima dosis: ${_formatDate(item['proxima_dosis'])}\nEstado: ${item['estado'] ?? 'Pendiente'}',
         ),
         isThreeLine: true,
       ),
@@ -267,11 +284,19 @@ class _TreatmentCard extends StatelessWidget {
               const SizedBox(height: 6),
               Text('Indicaciones: $instructions'),
             ],
-            const SizedBox(height: 10),
-            Text(
-              'Próximo control: ${_formatDate(item['proximo_control'])}',
-              style: const TextStyle(color: Color(0xFF47745E)),
-            ),
+            if (item['fecha_inicio'] != null) ...[
+              const SizedBox(height: 8),
+              Text('Inicio: ${_formatDate(item['fecha_inicio'])}'),
+            ],
+            if (item['fecha_fin'] != null) ...[
+              const SizedBox(height: 6),
+              Text('Fin previsto: ${_formatDate(item['fecha_fin'])}',
+                  style: const TextStyle(color: Color(0xFF47745E))),
+            ] else if (item['proximo_control'] != null) ...[
+              const SizedBox(height: 10),
+              Text('Próximo control: ${_formatDate(item['proximo_control'])}',
+                  style: const TextStyle(color: Color(0xFF47745E))),
+            ],
           ],
         ),
       ),
