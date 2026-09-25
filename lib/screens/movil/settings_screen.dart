@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/utils/app_config.dart';
 import '../../controllers/movil/preferences_controller.dart';
@@ -7,14 +8,73 @@ import '../../services/movil/auth_service.dart';
 import 'about_adaptation_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key, this.embedded = false});
+  const SettingsScreen({super.key, this.embedded = false, this.onBack});
+
   final bool embedded;
+  final VoidCallback? onBack;
+
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  late final TextEditingController _nameController;
+  static const _darkGreen = Color(0xFF063D32);
+  static const _mint = Color(0xFFE9F7EF);
+  static const _muted = Color(0xFF74827E);
+
+  bool? _isConnected;
+
+  User? get _user => AuthService().getCurrentUser();
+
+  String get _displayName {
+    final user = _user;
+    final metadataName = user?.userMetadata?['full_name']?.toString().trim();
+    if (metadataName != null && metadataName.isNotEmpty) return metadataName;
+    final savedName = context.read<PreferencesController>().name.trim();
+    if (savedName.isNotEmpty) return savedName;
+    final emailName = user?.email?.split('@').first;
+    if (emailName != null && emailName.isNotEmpty) return emailName;
+    return 'Usuario EIVET';
+  }
+
+  String get _role {
+    final user = _user;
+    final metadata = user?.userMetadata ?? const <String, dynamic>{};
+    final appMetadata = user?.appMetadata ?? const <String, dynamic>{};
+    final value =
+        (metadata['role'] ??
+                metadata['rol'] ??
+                appMetadata['role'] ??
+                appMetadata['rol'])
+            ?.toString()
+            .trim();
+    return value == null || value.isEmpty ? 'Usuario EIVET' : value;
+  }
+
+  String? get _avatarUrl {
+    final value = _user?.userMetadata?['avatar_url']?.toString().trim();
+    return value == null || value.isEmpty ? null : value;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnection();
+  }
+
+  Future<void> _checkConnection() async {
+    final config = context.read<AppConfig>();
+    if (!config.useSupabase) {
+      if (mounted) setState(() => _isConnected = false);
+      return;
+    }
+    try {
+      await Supabase.instance.client.auth.getUser();
+      if (mounted) setState(() => _isConnected = true);
+    } catch (_) {
+      if (mounted) setState(() => _isConnected = false);
+    }
+  }
 
   Future<void> _signOut() async {
     final confirmed = await showDialog<bool>(
@@ -35,6 +95,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
     if (confirmed != true || !mounted) return;
+    if (_user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No hay una sesión iniciada.')),
+      );
+      return;
+    }
     try {
       await AuthService().signOut();
     } catch (_) {
@@ -45,125 +111,524 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
     }
   }
-  @override
-  void initState() {
-    super.initState();
-    _nameController = TextEditingController(
-      text: context.read<PreferencesController>().name,
-    );
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    final page = _content();
+    final content = _profileContent();
     return widget.embedded
-        ? page
-        : Scaffold(
-            appBar: AppBar(title: const Text('Mi perfil')),
-            body: page,
-          );
+        ? content
+        : Scaffold(backgroundColor: const Color(0xFFF7FAF8), body: content);
   }
 
-  Widget _content() {
+  Widget _profileContent() {
+    final config = context.watch<AppConfig>();
     final preferences = context.watch<PreferencesController>();
-    final isAuthenticated = context.read<AppConfig>().useSupabase &&
-        AuthService().isAuthenticated();
-    final email = isAuthenticated ? AuthService().getCurrentUser()?.email : null;
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-      children: <Widget>[
-        const Text(
-          'Mi perfil',
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
-        ),
-        const SizedBox(height: 4),
-        Text(email == null
-            ? 'Personaliza tu experiencia en EIVET.'
-            : 'Sesión iniciada: $email'),
-        const SizedBox(height: 22),
-        Center(
-          child: CircleAvatar(
-            radius: 42,
-            backgroundColor: const Color(0xFFE5F2E9),
-            child: Icon(Icons.person, size: 46, color: const Color(0xFF003F35)),
-          ),
-        ),
-        const SizedBox(height: 22),
-        TextField(
-          controller: _nameController,
-          textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(
-            labelText: 'Tu nombre',
-            prefixIcon: Icon(Icons.person_outline),
-          ),
-        ),
-        const SizedBox(height: 10),
-        FilledButton.icon(
-          onPressed: () async {
-            await preferences.setName(_nameController.text);
-            if (mounted)
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Perfil guardado en este dispositivo.'),
-                ),
-              );
-          },
-          icon: const Icon(Icons.save_outlined),
-          label: const Text('Guardar cambios'),
-        ),
-        const SizedBox(height: 22),
-        Card(
-          elevation: 0,
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 22),
+      children: [
+        _header(),
+        _profileBanner(),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
           child: Column(
-            children: <Widget>[
-              SwitchListTile(
-                value: preferences.darkMode,
-                title: const Text('Tema oscuro'),
-                subtitle: const Text('Preferencia guardada localmente'),
-                secondary: const Icon(Icons.dark_mode_outlined),
-                onChanged: preferences.setDarkMode,
+            children: [
+              _settingTile(
+                icon: Icons.person_outline_rounded,
+                title: 'Información personal',
+                subtitle: 'Tu nombre y datos de contacto',
+                onTap: _editPersonalInfo,
               ),
-              const Divider(height: 1),
-              ListTile(
-                leading: const Icon(Icons.settings_ethernet_outlined),
-                title: const Text('Fuente de datos'),
-              subtitle: Text(isAuthenticated ? 'Cuenta conectada' : 'Modo de demostración'),
+              const SizedBox(height: 10),
+              _settingTile(
+                icon: Icons.settings_rounded,
+                title: 'Preferencias',
+                subtitle: 'Tema, notificaciones e idioma',
+                onTap: _showPreferences,
               ),
-              const Divider(height: 1),
-              ListTile(
-                leading: const Icon(Icons.info_outline),
-                title: const Text('Sobre la aplicación'),
-                subtitle: const Text('Información para la defensa'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => Navigator.push<void>(
+              const SizedBox(height: 10),
+              _settingTile(
+                icon: Icons.storage_rounded,
+                title: 'Fuente de datos',
+                subtitle: config.useSupabase
+                    ? 'Supabase (Producción)'
+                    : 'Modo de demostración local',
+                status: config.useSupabase ? _isConnected : false,
+                onTap: () {
+                  _showMessage(
+                    config.useSupabase
+                        ? (_isConnected == true
+                              ? 'Conexión activa con Supabase.'
+                              : 'No se pudo confirmar la conexión con Supabase.')
+                        : 'La aplicación está usando datos locales de demostración.',
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+              _settingTile(
+                icon: Icons.shield_outlined,
+                title: 'Seguridad',
+                subtitle: 'Cambiar contraseña y sesiones',
+                onTap: _showSecurity,
+              ),
+              const SizedBox(height: 25),
+              SizedBox(
+                width: double.infinity,
+                height: 58,
+                child: FilledButton.icon(
+                  onPressed: _signOut,
+                  icon: const Icon(Icons.logout_rounded),
+                  label: const Text('Cerrar sesión'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFE8EA),
+                    foregroundColor: const Color(0xFFD52D3A),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28),
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () => Navigator.push<void>(
                   context,
                   MaterialPageRoute<void>(
                     builder: (_) => const AboutAdaptationScreen(),
                   ),
                 ),
+                icon: const Icon(Icons.info_outline_rounded, size: 18),
+                label: const Text('Sobre la aplicación'),
+              ),
+              if (preferences.darkMode) ...[
+                const SizedBox(height: 10),
+                Text(
+                  'Tema oscuro activado',
+                  style: TextStyle(color: Theme.of(context).hintColor),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _header() => Padding(
+    padding: const EdgeInsets.fromLTRB(10, 5, 12, 5),
+    child: SizedBox(
+      height: 54,
+      child: Row(
+        children: [
+          IconButton(
+            tooltip: 'Volver',
+            onPressed: widget.onBack ?? () => Navigator.maybePop(context),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 21),
+          ),
+          const Expanded(
+            child: Text(
+              'Mi perfil',
+              style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800),
+            ),
+          ),
+          IconButton(
+            tooltip: 'Editar perfil',
+            onPressed: _editPersonalInfo,
+            icon: const Icon(Icons.edit_outlined),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  Widget _profileBanner() => Container(
+    color: _mint,
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
+    child: Row(
+      children: [
+        _avatar(radius: 49),
+        const SizedBox(width: 18),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _displayName,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 20,
+                  height: 1.15,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF162B26),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                _role,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 15, color: Color(0xFF667570)),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton.icon(
+                onPressed: _editPhoto,
+                icon: const Icon(Icons.add_a_photo_outlined, size: 16),
+                label: const Text('Editar foto'),
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: _darkGreen,
+                  side: BorderSide.none,
+                  visualDensity: VisualDensity.compact,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  shape: const StadiumBorder(),
+                ),
               ),
             ],
           ),
         ),
-        if (isAuthenticated) ...[
-          const SizedBox(height: 22),
-          OutlinedButton.icon(
-            onPressed: _signOut,
-            icon: const Icon(Icons.logout),
-            label: const Text('Cerrar sesión'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.error,
-              minimumSize: const Size.fromHeight(52),
+      ],
+    ),
+  );
+
+  Widget _avatar({required double radius}) => CircleAvatar(
+    radius: radius,
+    backgroundColor: _darkGreen,
+    foregroundImage: _avatarUrl == null ? null : NetworkImage(_avatarUrl!),
+    onForegroundImageError: (_, __) {},
+    child: Icon(Icons.person_rounded, color: Colors.white, size: radius * 1.12),
+  );
+
+  Widget _settingTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    bool? status,
+  }) => Material(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(19),
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(19),
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 82),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(19),
+          border: Border.all(color: const Color(0xFFF0F3F1)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x090B3E32),
+              blurRadius: 13,
+              offset: Offset(0, 4),
             ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: _darkGreen, size: 27),
+            const SizedBox(width: 18),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      if (status != null) ...[
+                        const SizedBox(width: 8),
+                        Icon(
+                          Icons.circle,
+                          size: 10,
+                          color: status ? const Color(0xFF15935D) : _muted,
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 13, color: _muted),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Icon(Icons.chevron_right_rounded, color: Color(0xFF8A9994)),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Future<void> _editPersonalInfo() async {
+    final nameController = TextEditingController(text: _displayName);
+    final email = _user?.email ?? 'Sin correo asociado';
+    final name = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Información personal'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: nameController,
+              textCapitalization: TextCapitalization.words,
+              decoration: const InputDecoration(labelText: 'Nombre'),
+            ),
+            const SizedBox(height: 12),
+            Text('Correo: $email', style: const TextStyle(color: _muted)),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, nameController.text),
+            child: const Text('Guardar'),
           ),
         ],
-      ],
+      ),
     );
+    nameController.dispose();
+    if (name == null || !mounted) return;
+    final cleanName = name.trim();
+    if (cleanName.isEmpty) {
+      _showMessage('Escribe un nombre válido.');
+      return;
+    }
+    try {
+      final user = _user;
+      if (user != null) {
+        await Supabase.instance.client.auth.updateUser(
+          UserAttributes(
+            data: {...user.userMetadata ?? {}, 'full_name': cleanName},
+          ),
+        );
+      }
+      await context.read<PreferencesController>().setName(cleanName);
+      if (mounted) setState(() {});
+      _showMessage('Información personal actualizada.');
+    } catch (_) {
+      _showMessage('No se pudo guardar el nombre. Intenta nuevamente.');
+    }
+  }
+
+  Future<void> _editPhoto() async {
+    final controller = TextEditingController(text: _avatarUrl ?? '');
+    final url = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Editar foto'),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.url,
+          decoration: const InputDecoration(
+            labelText: 'Enlace de la foto',
+            hintText: 'https://…',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, controller.text),
+            child: const Text('Guardar'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (url == null || !mounted) return;
+    final cleaned = url.trim();
+    if (_user == null) {
+      _showMessage('Inicia sesión para guardar tu foto de perfil.');
+      return;
+    }
+    final photoUri = Uri.tryParse(cleaned);
+    if (cleaned.isNotEmpty &&
+        (photoUri == null ||
+            !photoUri.hasAuthority ||
+            !{'http', 'https'}.contains(photoUri.scheme))) {
+      _showMessage('Escribe un enlace válido para la foto.');
+      return;
+    }
+    try {
+      final user = _user!;
+      final metadata = {...user.userMetadata ?? <String, dynamic>{}};
+      if (cleaned.isEmpty) {
+        metadata.remove('avatar_url');
+      } else {
+        metadata['avatar_url'] = cleaned;
+      }
+      await Supabase.instance.client.auth.updateUser(
+        UserAttributes(data: metadata),
+      );
+      if (mounted) setState(() {});
+      _showMessage('Foto de perfil actualizada.');
+    } catch (_) {
+      _showMessage('No se pudo actualizar la foto.');
+    }
+  }
+
+  Future<void> _showPreferences() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(18, 2, 18, 22),
+          child: Consumer<PreferencesController>(
+            builder: (context, preferences, _) => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Preferencias',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                  ),
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: preferences.darkMode,
+                  title: const Text('Tema oscuro'),
+                  subtitle: const Text('Se guarda en este dispositivo'),
+                  secondary: const Icon(Icons.dark_mode_outlined),
+                  onChanged: preferences.setDarkMode,
+                ),
+                const ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(Icons.notifications_active_outlined),
+                  title: Text('Notificaciones'),
+                  subtitle: Text(
+                    'Se muestran los avisos disponibles en la app',
+                  ),
+                ),
+                const ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(Icons.language_rounded),
+                  title: Text('Idioma'),
+                  subtitle: Text('Español'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showSecurity() async {
+    if (_user == null) {
+      _showMessage('Inicia sesión para administrar la seguridad de tu cuenta.');
+      return;
+    }
+    final passwordController = TextEditingController();
+    final confirmController = TextEditingController();
+    final result = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Seguridad'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(labelText: 'Nueva contraseña'),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: confirmController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Confirmar contraseña',
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'La sesión abierta en este dispositivo se conserva.',
+              style: TextStyle(fontSize: 12, color: _muted),
+            ),
+            const SizedBox(height: 4),
+            TextButton.icon(
+              onPressed: () => Navigator.pop(dialogContext, 'others'),
+              icon: const Icon(Icons.devices_outlined, size: 18),
+              label: const Text('Cerrar otras sesiones'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, 'save'),
+            child: const Text('Cambiar'),
+          ),
+        ],
+      ),
+    );
+    final password = passwordController.text;
+    final confirmation = confirmController.text;
+    passwordController.dispose();
+    confirmController.dispose();
+    if (!mounted) return;
+    if (result == 'others') {
+      try {
+        await Supabase.instance.client.auth.signOut(scope: SignOutScope.others);
+        _showMessage('Se cerraron las otras sesiones de tu cuenta.');
+      } catch (_) {
+        _showMessage('No se pudieron cerrar las otras sesiones.');
+      }
+      return;
+    }
+    if (result != 'save') return;
+    if (password.length < 6) {
+      _showMessage('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+    if (password != confirmation) {
+      _showMessage('Las contraseñas no coinciden.');
+      return;
+    }
+    try {
+      await AuthService().updatePassword(password);
+      _showMessage('Contraseña actualizada correctamente.');
+    } catch (_) {
+      _showMessage('No se pudo cambiar la contraseña.');
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 }

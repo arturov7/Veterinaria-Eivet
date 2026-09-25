@@ -7,11 +7,13 @@ class PetCareSnapshot {
     this.vaccines = const <Map<String, dynamic>>[],
     this.treatments = const <Map<String, dynamic>>[],
     this.appointments = const <Map<String, dynamic>>[],
+    this.consultations = const <Map<String, dynamic>>[],
   });
 
   final List<Map<String, dynamic>> vaccines;
   final List<Map<String, dynamic>> treatments;
   final List<Map<String, dynamic>> appointments;
+  final List<Map<String, dynamic>> consultations;
 
   static const empty = PetCareSnapshot();
 }

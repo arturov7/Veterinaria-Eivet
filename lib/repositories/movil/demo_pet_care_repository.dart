@@ -28,6 +28,14 @@ class DemoPetCareRepository implements PetCareRepository {
         },
       ],
       appointments: <Map<String, dynamic>>[],
+      consultations: <Map<String, dynamic>>[
+        <String, dynamic>{
+          'fecha': '2026-09-01',
+          'motivo': 'Control general',
+          'diagnostico': 'Buen estado de salud.',
+          'mascotas': <String, dynamic>{'nombre': 'Max'},
+        },
+      ],
     );
   }
 }

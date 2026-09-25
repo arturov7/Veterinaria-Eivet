@@ -13,7 +13,9 @@ class SupabasePetCareRepository implements PetCareRepository {
   Future<PetCareSnapshot> fetch({String? petId}) async {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) throw StateError('No hay una sesión activa.');
-    final ownedPets = await _client.from('mascotas').select('id')
+    final ownedPets = await _client
+        .from('mascotas')
+        .select('id')
         .eq('cliente_id', userId);
     final petIds = (ownedPets as List)
         .map((row) => row['id'].toString())
@@ -26,26 +28,39 @@ class SupabasePetCareRepository implements PetCareRepository {
         .from('vacunas')
         .select(
           'nombre, fecha_aplicacion, proxima_dosis, estado, mascotas(nombre)',
-        ).inFilter('mascota_id', visiblePetIds);
+        )
+        .inFilter('mascota_id', visiblePetIds);
     dynamic treatments = _client
         .from('historiales_clinicos')
         .select(
           'fecha, motivo, diagnostico, tratamiento, receta, indicaciones, proximo_control, mascotas(nombre)',
-        ).inFilter('mascota_id', visiblePetIds);
+        )
+        .inFilter('mascota_id', visiblePetIds);
     dynamic appointments = _client
         .from('citas')
         .select('fecha_hora, motivo, estado')
-        .eq('cliente_id', userId).inFilter('mascota_id', visiblePetIds);
+        .eq('cliente_id', userId)
+        .inFilter('mascota_id', visiblePetIds);
     final staffTreatments = _client
         .from('tratamientos')
-        .select('nombre, indicaciones, fecha_inicio, fecha_fin, estado, mascotas(nombre)')
+        .select(
+          'nombre, indicaciones, fecha_inicio, fecha_fin, estado, mascotas(nombre)',
+        )
         .inFilter('mascota_id', visiblePetIds);
+    final consultations = _client
+        .from('historiales_clinicos')
+        .select(
+          'fecha, motivo, diagnostico, tratamiento, receta, indicaciones, examenes, proximo_control, mascotas(nombre)',
+        )
+        .inFilter('mascota_id', visiblePetIds)
+        .eq('autorizado', true);
     treatments = treatments.eq('autorizado', true);
     final results = await Future.wait<dynamic>([
       vaccines.order('proxima_dosis'),
       treatments.order('fecha', ascending: false),
       appointments.order('fecha_hora'),
       staffTreatments.order('fecha_inicio', ascending: false),
+      consultations.order('fecha', ascending: false),
     ]);
     final visibleTreatments = _rows(results[1]);
     for (final row in _rows(results[3])) {
@@ -62,6 +77,7 @@ class SupabasePetCareRepository implements PetCareRepository {
       vaccines: _rows(results[0]),
       treatments: visibleTreatments,
       appointments: _rows(results[2]),
+      consultations: _rows(results[4]),
     );
   }
 
