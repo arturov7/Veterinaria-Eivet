@@ -50,8 +50,8 @@ class _LoginState extends State<AdminLoginScreen> {
         : scale;
     final loginCardWidth = wide
         ? math.min(
-            768 * widthScale,
-            screenSize.width * 6 / 13 - 32 * widthScale,
+            820 * widthScale,
+            screenSize.width * 7 / 13 - 40 * widthScale,
           )
         : 620.0;
     final panel = LayoutBuilder(
@@ -298,9 +298,9 @@ class _LoginState extends State<AdminLoginScreen> {
       body: wide
           ? Row(
               children: [
-                Expanded(flex: 14, child: const _WelcomePanel()),
+                Expanded(flex: 12, child: const _WelcomePanel()),
                 Expanded(
-                  flex: 12,
+                  flex: 14,
                   child: Stack(
                     children: [
                       Positioned.fill(
@@ -329,64 +329,23 @@ class _LoginState extends State<AdminLoginScreen> {
                           ),
                         ),
                       ),
-                      Positioned(
-                        top: 16 * scale,
-                        right: 36 * widthScale,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 15 * widthScale,
-                            vertical: 11 * scale,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xffeff6f5),
-                            border: Border.all(color: const Color(0xffe2eeeb)),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.circle,
-                                color: Color(0xff18b986),
-                                size: 10,
-                              ),
-                              SizedBox(width: 9),
-                              Text(
-                                'Sistema Operativo',
-                                style: TextStyle(fontSize: 12 * scale),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 12),
-                                child: Text(
-                                  '|',
-                                  style: TextStyle(color: Color(0xffcbd5d5)),
-                                ),
-                              ),
-                              Text(
-                                'v2.4.0',
-                                style: TextStyle(fontSize: 12 * scale),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                       SafeArea(
                         child: Column(
                           children: [
                             Expanded(
                               child: Padding(
-                                padding: EdgeInsets.only(top: 74 * scale),
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                      right: 16 * widthScale,
-                                    ),
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: SizedBox(
-                                        width: loginCardWidth,
-                                        child: panel,
-                                      ),
-                                    ),
+                                padding: EdgeInsets.fromLTRB(
+                                  22 * widthScale,
+                                  18 * scale,
+                                  22 * widthScale,
+                                  8 * scale,
+                                ),
+                                child: Center(
+                                  child: SizedBox(
+                                    width: loginCardWidth,
+                                    child: panel,
                                   ),
+                                ),
                               ),
                             ),
                             Padding(
@@ -563,7 +522,6 @@ class _WelcomePanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
-      final height = constraints.maxHeight;
       final screenSize = MediaQuery.sizeOf(context);
       final scale = math
           .min(
@@ -603,288 +561,44 @@ class _WelcomePanel extends StatelessWidget {
             ),
           ),
           Positioned(
-            right: 70,
-            top: 190,
-            child: Icon(
-              Icons.pets,
-              size: 64,
-              color: Colors.white.withValues(alpha: .08),
+            left: 34 * scale,
+            top: constraints.maxHeight * .19,
+            width: constraints.maxWidth * .78,
+            child: Text.rich(
+              TextSpan(
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 34 * scale,
+                  height: 1.08,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -.7,
+                ),
+                children: [
+                  const TextSpan(text: 'Cuidado especializado,\n'),
+                  const TextSpan(
+                    text: 'compasión y atención avanzada',
+                    style: TextStyle(color: Color(0xffffd263)),
+                  ),
+                  const TextSpan(text: '\npara tus pacientes.'),
+                ],
+              ),
             ),
           ),
           Positioned(
-            right: 145,
-            top: 274,
-            child: Icon(
-              Icons.pets,
-              size: 48,
-              color: Colors.white.withValues(alpha: .06),
-            ),
+            left: 30 * scale,
+            top: 30 * scale,
+            child: EivetLogo(size: 104 * scale),
           ),
           Positioned(
-            right: 18,
-            bottom: 30,
-            child: Icon(
-              Icons.pets,
-              size: 52,
-              color: Colors.white.withValues(alpha: .06),
-            ),
-          ),
-          Positioned(
-            right: -40 * scale,
+            right: -25 * scale,
             bottom: 0,
-            width: constraints.maxWidth * .48,
-            height: height * .72,
+            width: constraints.maxWidth * .76,
+            height: constraints.maxHeight * .66,
             child: IgnorePointer(
               child: Image.asset(
                 'assets/eivet_pets_hero_v2.png',
                 fit: BoxFit.contain,
-                alignment: Alignment.bottomRight,
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              48 * scale,
-              38 * scale,
-              30 * scale,
-              22 * scale,
-            ),
-            child: SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: height - 60 * scale,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        EivetLogo(size: 112 * scale),
-                        SizedBox(width: 21 * scale),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'SISTEMA HOSPITALARIO INTEGRADO',
-                                style: TextStyle(
-                                  color: Color(0xffb6e9d4),
-                                  fontSize: 13 * scale,
-                                  letterSpacing: 1.2 * scale,
-                                ),
-                              ),
-                              Text(
-                                'VETERINARIA EIVET',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 36 * scale,
-                                  fontWeight: FontWeight.w800,
-                                  height: 1.15,
-                                ),
-                              ),
-                              Text(
-                                'C I E N C I A   ·   C O M P A S I Ó N   ·   V I D A',
-                                style: TextStyle(
-                                  color: Color(0xffb6e9d4),
-                                  fontSize: 12 * scale,
-                                  letterSpacing: scale,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(width: 12 * scale),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 24 * scale,
-                            vertical: 15 * scale,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: .10),
-                            border: Border.all(color: const Color(0x668ddabc)),
-                          borderRadius: BorderRadius.circular(24 * scale),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.volunteer_activism_outlined,
-                                color: Color(0xffffd263),
-                                size: 22 * scale,
-                              ),
-                              SizedBox(width: 8 * scale),
-                              Text(
-                                'ONCOLOGÍA',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14 * scale,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 46 * scale),
-                    SizedBox(
-                      width: constraints.maxWidth * .76,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 18 * scale),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16 * scale),
-                            child: Text.rich(
-                              TextSpan(
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 50 * scale,
-                                  height: 1.06,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: -.8,
-                                ),
-                                children: [
-                                  TextSpan(text: 'Cuidado especializado,\n'),
-                                  TextSpan(
-                                    text: 'compasión y ciencia avanzada',
-                                    style: TextStyle(color: Color(0xffffd263)),
-                                  ),
-                                  TextSpan(text: '\npara tus pacientes.'),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 19 * scale),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16 * scale),
-                              child: Text(
-                              'Acceso centralizado para médicos veterinarios oncólogos, cirujanos y personal de enfermería. Gestión de historias clínicas, quimioterapias, monitoreo de biometría y citas oncológicas.',
-                              style: TextStyle(
-                                color: Color(0xffd1e9df),
-                                fontSize: 17 * scale,
-                                height: 1.5,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 31 * scale),
-                          SizedBox(
-                            width: constraints.maxWidth * .60,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: _FeatureCard(
-                                    icon: Icons.cloud_sync_outlined,
-                                    title: 'Sincronización en la nube',
-                                    headline: 'Supabase Cloud',
-                                    scale: scale,
-                                    detail:
-                                        'Datos seguros y en tiempo real desde cualquier sede.',
-                                  ),
-                                ),
-                                SizedBox(width: 14 * scale),
-                                Expanded(
-                                  child: _FeatureCard(
-                                    icon: Icons.description_outlined,
-                                    title: 'Ficha Clínica v2.4',
-                                    headline: 'Módulo de Oncología',
-                                    scale: scale,
-                                    detail:
-                                        'Protocolos oncológicos certificados y seguimiento especializado.',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 12 * scale),
-                          SizedBox(
-                            width: constraints.maxWidth * .60,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: _FeatureCard(
-                                    icon: Icons.verified_user_outlined,
-                                    title: 'Seguridad Avanzada',
-                                    headline: 'SSL/TLS',
-                                    scale: scale,
-                                    detail:
-                                        'Encriptación de extremo a extremo de tus datos.',
-                                  ),
-                                ),
-                                SizedBox(width: 14 * scale),
-                                Expanded(
-                                  child: _FeatureCard(
-                                    icon: Icons.groups_2_outlined,
-                                    title: 'Trabajo en Equipo',
-                                    headline: 'Gestión Multisede',
-                                    scale: scale,
-                                    detail:
-                                        'Acceso para veterinarios, cirujanos y personal de enfermería.',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 36 * scale),
-                    SizedBox(
-                      width: constraints.maxWidth * .92,
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.groups_2_outlined,
-                                color: Color(0xff53deb0),
-                                size: 24,
-                              ),
-                              SizedBox(width: 14),
-                              Expanded(
-                                child: _StatBlock(
-                                  value: '+500',
-                                  label: 'Pacientes oncológicos atendidos',
-                                  scale: scale,
-                                ),
-                              ),
-                              SizedBox(width: 14 * scale),
-                              SizedBox(
-                                width: 1,
-                                height: 48 * scale,
-                                child: ColoredBox(color: Colors.white24),
-                              ),
-                              SizedBox(width: 14 * scale),
-                              Icon(Icons.pets, color: Colors.white, size: 24 * scale),
-                              SizedBox(width: 14 * scale),
-                              Expanded(
-                                child: _StatBlock(
-                                  value: '12+',
-                                  label: 'Años de experiencia especializada',
-                                  scale: scale,
-                                ),
-                              ),
-                              SizedBox(width: 14 * scale),
-                              SizedBox(
-                                width: 1,
-                                height: 48 * scale,
-                                child: ColoredBox(color: Colors.white24),
-                              ),
-                              SizedBox(width: 14 * scale),
-                              Icon(
-                                Icons.favorite,
-                                color: Colors.white,
-                                size: 24 * scale,
-                              ),
-                              SizedBox(width: 10 * scale),
-                              Expanded(child: _ClosingStat(scale: scale)),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                alignment: Alignment.bottomCenter,
               ),
             ),
           ),
@@ -893,7 +607,6 @@ class _WelcomePanel extends StatelessWidget {
     },
   );
 }
-
 class _LoginHeroShapes extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -956,139 +669,4 @@ class _LoginHeroShapes extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _LoginHeroShapes oldDelegate) => false;
-}
-
-class _StatBlock extends StatelessWidget {
-  const _StatBlock({required this.value, required this.label, this.scale = 1});
-  final String value, label;
-  final double scale;
-
-  @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        value,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20 * scale,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
-      Text(
-        label,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: Color(0xffc2e2d6),
-          fontSize: 12 * scale,
-          height: 1.3,
-        ),
-      ),
-    ],
-  );
-}
-
-class _ClosingStat extends StatelessWidget {
-  const _ClosingStat({this.scale = 1});
-  final double scale;
-
-  @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        'Como siempre,',
-        style: TextStyle(color: Color(0xffc2e2d6), fontSize: 12 * scale),
-      ),
-      Text(
-        'por una vida mejor',
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16 * scale,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
-      Text(
-        'para ellos',
-        style: TextStyle(color: Color(0xffc2e2d6), fontSize: 12 * scale),
-      ),
-    ],
-  );
-}
-
-class _FeatureCard extends StatelessWidget {
-  const _FeatureCard({
-    required this.icon,
-    required this.title,
-    required this.headline,
-    required this.detail,
-    required this.scale,
-  });
-  final IconData icon;
-  final String title, headline, detail;
-  final double scale;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    constraints: BoxConstraints(minHeight: 140 * scale),
-    padding: EdgeInsets.all(15 * scale),
-    decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: .08),
-      border: Border.all(color: Colors.white24),
-      borderRadius: BorderRadius.circular(15 * scale),
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 42 * scale,
-          height: 42 * scale,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: .09),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: const Color(0xff64e2b6), size: 22 * scale),
-        ),
-        SizedBox(width: 11 * scale),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  color: Color(0xffd4f1e4),
-                  fontSize: 12 * scale,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(height: 5 * scale),
-              Text(
-                headline,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15 * scale,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(height: 4 * scale),
-              Text(
-                detail,
-                style: TextStyle(
-                  color: Color(0xffb5d2c6),
-                  fontSize: 10 * scale,
-                  height: 1.35,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
 }
