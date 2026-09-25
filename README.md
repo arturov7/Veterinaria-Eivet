@@ -46,12 +46,14 @@ La carpeta `stitch_*` contiene diseños de interfaz de referencia y se conserva 
 
 ## Despliegue web en Netlify
 
-Habilita Flutter SDK en Netlify y configura `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY` como variables de entorno disponibles durante el build. El archivo `.env` local no se sube al repositorio. Usa este comando de compilación (Bash):
+Configura `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY` como variables de entorno disponibles durante el build. El archivo `.env` local no se sube al repositorio.
+
+El archivo `netlify.toml` define el comando y el directorio de publicación. `scripts/build_netlify.sh` instala Flutter 3.44.8 (la versión del entorno local), descarga las dependencias y compila usando las variables de Netlify. No requiere instalar una integración de Flutter. Si Netlify solicita un comando de compilación, usa:
 
 ```bash
-flutter build web --release --dart-define=APP_MODE=supabase --dart-define=SUPABASE_URL="$SUPABASE_URL" --dart-define=SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
+bash scripts/build_netlify.sh
 ```
 
-Directorio de publicación: `build/web`. Los cambios enviados a la rama de producción conectada se publican automáticamente.
+Directorio de publicación: `build/web`. Guarda `netlify.toml` y el script en el repositorio. Su configuración tiene prioridad sobre el comando y directorio definidos en el panel de Netlify. Los cambios enviados a la rama de producción conectada se publican automáticamente. Para actualizar el SDK, cambia `FLUTTER_VERSION` en `netlify.toml`.
 
 La publishable key de Supabase es pública y forma parte de la aplicación compilada. `.env` evita guardar sus valores en el código fuente y en Git; no los convierte en secretos del navegador. Las claves `service_role` y `sb_secret_` deben mantenerse exclusivamente en el servidor. La función `crear-propietario` obtiene su clave de servicio del entorno de Supabase.
