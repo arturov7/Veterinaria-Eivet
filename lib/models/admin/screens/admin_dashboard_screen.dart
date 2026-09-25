@@ -5,8 +5,9 @@ import '../controllers/admin_controller.dart';
 import '../utils/admin_theme.dart';
 
 class AdminDashboardScreen extends StatelessWidget {
-  const AdminDashboardScreen({super.key, this.onNavigate});
+  const AdminDashboardScreen({super.key, this.onNavigate, this.userName = ''});
   final ValueChanged<int>? onNavigate;
+  final String userName;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +67,11 @@ class AdminDashboardScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _WelcomeBanner(onNavigate: onNavigate, compact: !desktop),
+              _WelcomeBanner(
+                onNavigate: onNavigate,
+                compact: !desktop,
+                userName: userName,
+              ),
               const SizedBox(height: 15),
               GridView.builder(
                 shrinkWrap: true,
@@ -248,47 +253,21 @@ class _MetricCard extends StatelessWidget {
               ),
             ],
           ),
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: _MiniBars(color: metric.accent),
-          ),
         ],
       ),
     ),
   );
 }
 
-class _MiniBars extends StatelessWidget {
-  const _MiniBars({required this.color});
-  final Color color;
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    height: 20,
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        for (final h in [8.0, 13.0, 10.0, 18.0])
-          Padding(
-            padding: const EdgeInsets.only(left: 3),
-            child: Container(
-              width: 4,
-              height: h,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: .45),
-                borderRadius: BorderRadius.circular(3),
-              ),
-            ),
-          ),
-      ],
-    ),
-  );
-}
-
 class _WelcomeBanner extends StatelessWidget {
-  const _WelcomeBanner({required this.onNavigate, required this.compact});
+  const _WelcomeBanner({
+    required this.onNavigate,
+    required this.compact,
+    required this.userName,
+  });
   final ValueChanged<int>? onNavigate;
   final bool compact;
+  final String userName;
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
@@ -372,11 +351,6 @@ class _WelcomeBanner extends StatelessWidget {
                         foreground: Colors.white,
                       ),
                       _Badge(
-                        '● Supabase conectado',
-                        background: const Color(0xffd8f5e7),
-                        foreground: const Color(0xff075c40),
-                      ),
-                      _Badge(
                         dateLabel,
                         background: Colors.white.withValues(alpha: .72),
                         foreground: AdminTheme.muted,
@@ -389,7 +363,7 @@ class _WelcomeBanner extends StatelessWidget {
                     child: RichText(
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      text: const TextSpan(
+                      text: TextSpan(
                         style: TextStyle(
                           fontFamily: 'Plus Jakarta Sans',
                           fontSize: 28,
@@ -397,27 +371,17 @@ class _WelcomeBanner extends StatelessWidget {
                           fontWeight: FontWeight.w800,
                           color: AdminTheme.forest,
                         ),
-                        children: [
-                          TextSpan(text: 'Bienvenido de nuevo,\n'),
-                          TextSpan(
-                            text: 'Dr. Carlos Mendoza',
-                            style: TextStyle(color: Color(0xffc99b32)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 7),
-                  SizedBox(
-                    width: narrow ? width - 36 : width * .47,
-                    child: const Text(
-                      'Jornada especializada en oncología y cirugía ambulatoria.\nProtocolos activos en sala 1 y 3.',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        height: 1.35,
-                        color: Color(0xff425c51),
+                        children: userName.trim().isEmpty
+                            ? const [TextSpan(text: 'Bienvenido de nuevo')]
+                            : [
+                                const TextSpan(text: 'Bienvenido de nuevo,\n'),
+                                TextSpan(
+                                  text: userName.trim(),
+                                  style: const TextStyle(
+                                    color: Color(0xffc99b32),
+                                  ),
+                                ),
+                              ],
                       ),
                     ),
                   ),

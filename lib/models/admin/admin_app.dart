@@ -63,10 +63,9 @@ class _ShellState extends State<_Shell> {
   @override
   Widget build(BuildContext c) {
     final auth = c.watch<AdminAuthController>();
-    final config = c.watch<AppConfig>();
     final wide = MediaQuery.sizeOf(c).width >= 1100;
     final screens = [
-      const AdminDashboardScreen(),
+      AdminDashboardScreen(userName: auth.name),
       RecordsScreen(
         title: 'Citas veterinarias',
         type: 'citas',
@@ -128,7 +127,6 @@ class _ShellState extends State<_Shell> {
               children: [
                 _AdminTopBar(
                   title: AdminSidebar.labels[safeIndex],
-                  dataMode: config.useSupabase ? 'SUPABASE' : 'DEMO',
                   showMenu: !wide,
                   name: auth.name,
                   onMenu: () => _scaffoldKey.currentState?.openDrawer(),
@@ -138,6 +136,7 @@ class _ShellState extends State<_Shell> {
                 Expanded(
                   child: screens[safeIndex] is AdminDashboardScreen
                       ? AdminDashboardScreen(
+                          userName: auth.name,
                           onNavigate: (v) => setState(
                             () =>
                                 index = v.clamp(0, screens.length - 1).toInt(),
@@ -157,14 +156,13 @@ class _ShellState extends State<_Shell> {
 class _AdminTopBar extends StatelessWidget {
   const _AdminTopBar({
     required this.title,
-    required this.dataMode,
     required this.showMenu,
     required this.name,
     required this.onMenu,
     required this.onNewConsultation,
     required this.onLogout,
   });
-  final String title, name, dataMode;
+  final String title, name;
   final bool showMenu;
   final VoidCallback onMenu;
   final VoidCallback onNewConsultation;
@@ -196,44 +194,6 @@ class _AdminTopBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 14),
-        if (MediaQuery.sizeOf(context).width > 1050)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-            decoration: BoxDecoration(
-              color: const Color(0xffedf2ff),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.schedule, size: 16, color: Color(0xff1b8354)),
-                SizedBox(width: 7),
-                Text(
-                  'Turno Activo: Quirófano • 08:30 - 18:00',
-                  style: TextStyle(fontSize: 11, color: Color(0xff414844)),
-                ),
-              ],
-            ),
-          ),
-        Container(
-          margin: const EdgeInsets.only(left: 8),
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-          decoration: BoxDecoration(
-            color: dataMode == 'SUPABASE'
-                ? const Color(0xffe8f5ee)
-                : const Color(0xfffff4d6),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            dataMode,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
-              color: dataMode == 'SUPABASE'
-                  ? const Color(0xff167044)
-                  : const Color(0xff8a5b00),
-            ),
-          ),
-        ),
         IconButton(
           onPressed: () {},
           tooltip: 'Notificaciones',

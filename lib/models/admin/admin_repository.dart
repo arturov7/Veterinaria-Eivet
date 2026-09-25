@@ -15,27 +15,8 @@ abstract class AdminRepository {
 }
 
 class DemoAdminRepository implements AdminRepository {
-  final _owners = <Owner>[
-    const Owner(
-      id: 'o1',
-      name: 'Ana Pérez',
-      phone: '70000001',
-      email: 'ana@demo.bo',
-    ),
-  ];
-  final _pets = <AdminPet>[
-    AdminPet(
-      id: 'p1',
-      ownerId: 'o1',
-      ownerName: 'Ana Pérez',
-      name: 'Max',
-      species: 'Perro',
-      breed: 'Labrador',
-      sex: 'Macho',
-      birthDate: DateTime(2022, 5, 10),
-      weight: 24,
-    ),
-  ];
+  final _owners = <Owner>[];
+  final _pets = <AdminPet>[];
   final _data = <String, List<AdminRecord>>{
     'citas': [],
     'consultas': [],
