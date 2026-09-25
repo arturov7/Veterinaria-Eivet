@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../core/utils/app_config.dart';
 import '../../controllers/movil/preferences_controller.dart';
 import '../../services/movil/auth_service.dart';
 import 'about_adaptation_screen.dart';
@@ -22,7 +22,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   static const _mint = Color(0xFFE9F7EF);
   static const _muted = Color(0xFF74827E);
 
-  bool? _isConnected;
+  bool _uploadingPhoto = false;
 
   User? get _user => AuthService().getCurrentUser();
 
@@ -54,26 +54,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String? get _avatarUrl {
     final value = _user?.userMetadata?['avatar_url']?.toString().trim();
     return value == null || value.isEmpty ? null : value;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _checkConnection();
-  }
-
-  Future<void> _checkConnection() async {
-    final config = context.read<AppConfig>();
-    if (!config.useSupabase) {
-      if (mounted) setState(() => _isConnected = false);
-      return;
-    }
-    try {
-      await Supabase.instance.client.auth.getUser();
-      if (mounted) setState(() => _isConnected = true);
-    } catch (_) {
-      if (mounted) setState(() => _isConnected = false);
-    }
   }
 
   Future<void> _signOut() async {
@@ -121,7 +101,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _profileContent() {
-    final config = context.watch<AppConfig>();
     final preferences = context.watch<PreferencesController>();
     return ListView(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 22),
@@ -144,24 +123,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: 'Preferencias',
                 subtitle: 'Tema, notificaciones e idioma',
                 onTap: _showPreferences,
-              ),
-              const SizedBox(height: 10),
-              _settingTile(
-                icon: Icons.storage_rounded,
-                title: 'Fuente de datos',
-                subtitle: config.useSupabase
-                    ? 'Supabase (Producción)'
-                    : 'Modo de demostración local',
-                status: config.useSupabase ? _isConnected : false,
-                onTap: () {
-                  _showMessage(
-                    config.useSupabase
-                        ? (_isConnected == true
-                              ? 'Conexión activa con Supabase.'
-                              : 'No se pudo confirmar la conexión con Supabase.')
-                        : 'La aplicación está usando datos locales de demostración.',
-                  );
-                },
               ),
               const SizedBox(height: 10),
               _settingTile(
@@ -274,9 +235,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 10),
               OutlinedButton.icon(
-                onPressed: _editPhoto,
-                icon: const Icon(Icons.add_a_photo_outlined, size: 16),
-                label: const Text('Editar foto'),
+                onPressed: _uploadingPhoto ? null : _editPhoto,
+                icon: _uploadingPhoto
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.add_a_photo_outlined, size: 16),
+                label: Text(_uploadingPhoto ? 'Subiendo foto…' : 'Editar foto'),
                 style: OutlinedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: _darkGreen,
@@ -300,7 +267,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     radius: radius,
     backgroundColor: _darkGreen,
     foregroundImage: _avatarUrl == null ? null : NetworkImage(_avatarUrl!),
-    onForegroundImageError: (_, __) {},
+    onForegroundImageError: _avatarUrl == null ? null : (_, __) {},
     child: Icon(Icons.person_rounded, color: Colors.white, size: radius * 1.12),
   );
 
@@ -437,6 +404,124 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _editPhoto() async {
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(20, 4, 20, 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Cambiar foto de perfil',
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800),
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Elegir desde la galería'),
+              subtitle: const Text('Selecciona una imagen del celular'),
+              onTap: () => Navigator.pop(sheetContext, 'gallery'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.link_rounded),
+              title: const Text('Usar un enlace'),
+              subtitle: const Text('Pegar la dirección de una imagen'),
+              onTap: () => Navigator.pop(sheetContext, 'link'),
+            ),
+            if (_avatarUrl != null)
+              ListTile(
+                leading: const Icon(Icons.delete_outline_rounded),
+                title: const Text('Quitar foto actual'),
+                onTap: () => Navigator.pop(sheetContext, 'remove'),
+              ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+    if (!mounted || action == null) return;
+    if (_user == null) {
+      _showMessage('Inicia sesión para guardar tu foto de perfil.');
+      return;
+    }
+    switch (action) {
+      case 'gallery':
+        await _pickAndUploadPhoto();
+      case 'link':
+        await _editPhotoUrl();
+      case 'remove':
+        await _removePhoto();
+    }
+  }
+
+  Future<void> _pickAndUploadPhoto() async {
+    try {
+      final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+        maxWidth: 1200,
+        maxHeight: 1200,
+      );
+      if (image == null || !mounted) return;
+      final extension = image.name.split('.').last.toLowerCase();
+      const mimeTypes = {
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'png': 'image/png',
+        'webp': 'image/webp',
+      };
+      final contentType = mimeTypes[extension];
+      if (contentType == null) {
+        _showMessage('Elige una imagen JPG, PNG o WEBP.');
+        return;
+      }
+      final bytes = await image.readAsBytes();
+      if (bytes.lengthInBytes > 5 * 1024 * 1024) {
+        _showMessage('La foto debe pesar como máximo 5 MB.');
+        return;
+      }
+      setState(() => _uploadingPhoto = true);
+      final user = _user;
+      if (user == null) {
+        _showMessage('La sesión venció. Inicia sesión nuevamente.');
+        return;
+      }
+      final client = Supabase.instance.client;
+      final path =
+          '${user.id}/${DateTime.now().toUtc().millisecondsSinceEpoch}.$extension';
+      await client.storage
+          .from('avatars')
+          .uploadBinary(
+            path,
+            bytes,
+            fileOptions: FileOptions(contentType: contentType, upsert: true),
+          );
+      final publicUrl = client.storage.from('avatars').getPublicUrl(path);
+      final metadata = {...user.userMetadata ?? <String, dynamic>{}}
+        ..['avatar_url'] = publicUrl
+        ..['avatar_path'] = path;
+      await client.auth.updateUser(UserAttributes(data: metadata));
+      if (mounted) {
+        setState(() {});
+        _showMessage('Foto de perfil actualizada.');
+      }
+    } catch (_) {
+      if (mounted) {
+        _showMessage(
+          'No se pudo subir la foto. Verifica el bucket avatars en Supabase.',
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _uploadingPhoto = false);
+    }
+  }
+
+  Future<void> _editPhotoUrl() async {
     final controller = TextEditingController(text: _avatarUrl ?? '');
     final url = await showDialog<String>(
       context: context,
@@ -465,10 +550,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     controller.dispose();
     if (url == null || !mounted) return;
     final cleaned = url.trim();
-    if (_user == null) {
-      _showMessage('Inicia sesión para guardar tu foto de perfil.');
-      return;
-    }
     final photoUri = Uri.tryParse(cleaned);
     if (cleaned.isNotEmpty &&
         (photoUri == null ||
@@ -482,8 +563,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final metadata = {...user.userMetadata ?? <String, dynamic>{}};
       if (cleaned.isEmpty) {
         metadata.remove('avatar_url');
+        metadata.remove('avatar_path');
       } else {
         metadata['avatar_url'] = cleaned;
+        metadata.remove('avatar_path');
       }
       await Supabase.instance.client.auth.updateUser(
         UserAttributes(data: metadata),
@@ -492,6 +575,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _showMessage('Foto de perfil actualizada.');
     } catch (_) {
       _showMessage('No se pudo actualizar la foto.');
+    }
+  }
+
+  Future<void> _removePhoto() async {
+    final user = _user;
+    if (user == null) return;
+    try {
+      final metadata = {...user.userMetadata ?? <String, dynamic>{}}
+        ..remove('avatar_url');
+      final path = metadata.remove('avatar_path') as String?;
+      if (path != null && path.startsWith('${user.id}/')) {
+        await Supabase.instance.client.storage.from('avatars').remove([path]);
+      }
+      await Supabase.instance.client.auth.updateUser(
+        UserAttributes(data: metadata),
+      );
+      if (mounted) {
+        setState(() {});
+        _showMessage('Foto de perfil eliminada.');
+      }
+    } catch (_) {
+      _showMessage('No se pudo quitar la foto.');
     }
   }
 
