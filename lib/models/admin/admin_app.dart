@@ -23,7 +23,7 @@ class AdminApp extends StatelessWidget {
             !c.read<AppConfig>().useSupabase
         ? const Scaffold(
             body: Center(
-              child: Text('Configura Supabase con --dart-define-from-file=config/local.json para abrir el panel.'),
+              child: Text('Configura Supabase con --dart-define-from-file=.env para abrir el panel.'),
             ),
           )
         : const _Gate(),

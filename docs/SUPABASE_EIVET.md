@@ -1,6 +1,6 @@
-﻿# Supabase EIVET
+# Supabase EIVET
 
-Supabase es el backend y la base de datos del proyecto. Configura `config/local.json` con la URL del proyecto y su publishable key; este archivo es local y está excluido del repositorio.
+Supabase es el backend y la base de datos del proyecto. Configura `.env` con la URL del proyecto y su publishable key; este archivo es local y está excluido del repositorio.
 
 ## Esquema
 
@@ -38,8 +38,8 @@ Los archivos SQL declaran el esquema esperado; comprueba en Supabase que la ejec
 
 ## Ejecutar
 
-- Móvil/Web con Supabase: `flutter run --dart-define-from-file=config/local.json`
-- Android release: `flutter build apk --release --dart-define-from-file=config/local.json`
+- Móvil/Web con Supabase: `flutter run --dart-define-from-file=.env`
+- Android release: `flutter build apk --release --dart-define-from-file=.env`
 - Windows: `scripts/03_EJECUTAR_SUPABASE_WINDOWS.bat`
 
 No pongas claves privadas ni `service_role` en la app Flutter. Usa únicamente la publishable/anon key y políticas RLS.

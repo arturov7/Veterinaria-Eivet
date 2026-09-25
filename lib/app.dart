@@ -52,7 +52,7 @@ class _SupabaseConfigurationScreen extends StatelessWidget {
               SizedBox(height: 16),
               Text('Falta configurar Supabase', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
-              Text('Completa APP_MODE, SUPABASE_URL y SUPABASE_PUBLISHABLE_KEY en config/local.json y vuelve a iniciar la app.', textAlign: TextAlign.center),
+              Text('Completa APP_MODE, SUPABASE_URL y SUPABASE_PUBLISHABLE_KEY en .env y vuelve a iniciar la app.', textAlign: TextAlign.center),
             ],
           ),
         ),

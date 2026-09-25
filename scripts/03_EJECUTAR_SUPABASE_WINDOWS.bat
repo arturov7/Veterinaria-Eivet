@@ -2,11 +2,11 @@
 setlocal
 cd /d "%~dp0\.."
 
-if not exist "config\local.json" (
-  echo Falta el archivo config\local.json.
-  echo Copia config\local.example.json como config\local.json y configura Supabase.
+if not exist ".env" (
+  echo Falta el archivo .env.
+  echo Copia .env.example como .env y configura Supabase.
   pause
   exit /b 1
 )
 
-flutter run --dart-define-from-file=config/local.json
+flutter run --dart-define-from-file=.env %*
