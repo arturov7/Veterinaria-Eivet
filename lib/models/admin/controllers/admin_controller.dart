@@ -62,6 +62,17 @@ class AdminController<T> extends ChangeNotifier {
 
 class OwnersController extends AdminController<Owner> {
   OwnersController(AdminRepository repository) : super(repository, 'owners');
+
+  Future<void> createClientAccount(Owner owner, String password) async {
+    try {
+      await repository.createClientAccount(owner, password);
+      await load();
+    } catch (e) {
+      error = 'No se pudo crear la cuenta: $e';
+      notifyListeners();
+      rethrow;
+    }
+  }
 }
 
 class PetsController extends AdminController<AdminPet> {

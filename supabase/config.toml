@@ -1,0 +1,4 @@
+[functions.crear-propietario]
+# Permite que el OPTIONS del navegador llegue a la función. El POST exige
+# igualmente un JWT válido y rol administrador dentro de index.ts.
+verify_jwt = false

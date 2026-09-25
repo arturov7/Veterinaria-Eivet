@@ -3,6 +3,7 @@ import 'admin_models.dart';
 
 abstract class AdminRepository {
   Future<List<Owner>> owners();
+  Future<void> createClientAccount(Owner v, String password);
   Future<void> saveOwner(Owner v);
   Future<void> deleteOwner(String id);
   Future<List<AdminPet>> pets();
@@ -44,6 +45,9 @@ class DemoAdminRepository implements AdminRepository {
   String _id() => DateTime.now().microsecondsSinceEpoch.toString();
   @override
   Future<List<Owner>> owners() async => List.of(_owners);
+  @override
+  Future<void> createClientAccount(Owner v, String password) async =>
+      throw StateError('Las cuentas móviles requieren Supabase.');
   @override
   Future<void> saveOwner(Owner v) async {
     final x = Owner(
@@ -134,6 +138,39 @@ class SupabaseAdminRepository implements AdminRepository {
       'id,nombre,telefono,direccion,correo,created_at',
     );
     return [...accounts, ...manual];
+  }
+  @override
+  Future<void> createClientAccount(Owner v, String password) async {
+    final token = _db.auth.currentSession?.accessToken;
+    if (token == null) throw StateError('Inicia sesión como administrador.');
+    try {
+      await _db.functions.invoke(
+        'crear-propietario',
+        headers: {'Authorization': 'Bearer $token'},
+        body: {
+          'nombre': v.name.trim(),
+          'correo': v.email.trim().toLowerCase(),
+          'contrasena': password,
+          'telefono': v.phone.trim(),
+          'direccion': v.address.trim(),
+        },
+      );
+    } on FunctionException catch (error) {
+      final details = error.details;
+      if (details is Map && details['error'] is String) {
+        throw StateError(details['error'] as String);
+      }
+      if (error.status == 0) {
+        throw StateError(
+          'No se pudo contactar la función crear-propietario. Verifica que esté desplegada en este proyecto y que el preflight OPTIONS responda 200.',
+        );
+      }
+      throw StateError(
+        error.status == 404
+            ? 'Falta desplegar la función crear-propietario en Supabase.'
+            : 'No se pudo crear la cuenta (${error.status}).',
+      );
+    }
   }
   @override
   Future<void> saveOwner(Owner v) => _save('propietarios', v.id, v.toMap());

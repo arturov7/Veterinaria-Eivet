@@ -1906,7 +1906,7 @@ class _Scaffold extends StatelessWidget {
             onPressed: onAdd,
             icon: const Icon(Icons.add),
             label: Text(
-              type == 'propietarios' ? 'Nuevo propietario manual' : 'Nuevo registro',
+              type == 'propietarios' ? 'Crear cuenta de propietario' : 'Nuevo registro',
             ),
           ),
         ),
@@ -2007,11 +2007,15 @@ Future<void> _ownerDialog(
       p = TextEditingController(text: x?.phone),
       e = TextEditingController(text: x?.email),
       ci = TextEditingController(text: x?.ci),
-      ad = TextEditingController(text: x?.address);
+      ad = TextEditingController(text: x?.address),
+      password = TextEditingController();
+  bool saving = false;
+  String? saveError;
   await showDialog(
     context: c,
-    builder: (d) => AlertDialog(
-      title: Text(x == null ? 'Nuevo propietario' : 'Editar propietario'),
+    builder: (d) => StatefulBuilder(
+      builder: (d, set) => AlertDialog(
+      title: Text(x == null ? 'Crear cuenta de propietario' : 'Editar propietario manual'),
       content: SingleChildScrollView(
         child: Form(
           key: f,
@@ -2023,10 +2027,11 @@ Future<void> _ownerDialog(
                 decoration: const InputDecoration(labelText: 'Nombre completo'),
                 validator: (v) => AdminValidators.required(v, 'El nombre'),
               ),
-              TextFormField(
-                controller: ci,
-                decoration: const InputDecoration(labelText: 'CI'),
-              ),
+              if (x != null)
+                TextFormField(
+                  controller: ci,
+                  decoration: const InputDecoration(labelText: 'CI'),
+                ),
               TextFormField(
                 controller: p,
                 decoration: const InputDecoration(labelText: 'Teléfono'),
@@ -2034,12 +2039,31 @@ Future<void> _ownerDialog(
               TextFormField(
                 controller: e,
                 decoration: const InputDecoration(labelText: 'Correo'),
-                validator: (v) => v!.isEmpty ? null : AdminValidators.email(v),
+                keyboardType: TextInputType.emailAddress,
+                validator: (v) => x == null && (v == null || v.trim().isEmpty)
+                    ? 'Ingresa el correo de acceso'
+                    : v == null || v.trim().isEmpty ? null : AdminValidators.email(v),
               ),
               TextFormField(
                 controller: ad,
                 decoration: const InputDecoration(labelText: 'Dirección'),
               ),
+              if (x == null) ...[
+                TextFormField(
+                  controller: password,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Contraseña de acceso móvil'),
+                  validator: (v) => v == null || v.length < 8
+                      ? 'Usa al menos 8 caracteres'
+                      : null,
+                ),
+                const SizedBox(height: 12),
+                const Text('Esta cuenta podrá iniciar sesión en la app móvil y registrar sus mascotas y citas.'),
+              ],
+              if (saveError != null) ...[
+                const SizedBox(height: 12),
+                Text(saveError!, style: TextStyle(color: Theme.of(d).colorScheme.error)),
+              ],
             ],
           ),
         ),
@@ -2050,24 +2074,35 @@ Future<void> _ownerDialog(
           child: const Text('Cancelar'),
         ),
         FilledButton(
-          onPressed: () async {
+          onPressed: saving ? null : () async {
             if (f.currentState!.validate()) {
-              await a.save(
-                Owner(
+              set(() { saving = true; saveError = null; });
+              try {
+                final owner = Owner(
                   id: x?.id,
                   name: n.text,
                   ci: ci.text,
                   phone: p.text,
                   email: e.text,
                   address: ad.text,
-                ),
-              );
-              if (d.mounted) Navigator.pop(d);
+                );
+                if (x == null) {
+                  await a.createClientAccount(owner, password.text);
+                } else {
+                  await a.save(owner);
+                }
+                if (d.mounted) Navigator.pop(d);
+              } catch (error) {
+                if (d.mounted) set(() => saveError = '$error');
+              } finally {
+                if (d.mounted) set(() => saving = false);
+              }
             }
           },
-          child: const Text('Guardar'),
+          child: Text(saving ? 'Guardando...' : x == null ? 'Crear cuenta' : 'Guardar'),
         ),
       ],
+    ),
     ),
   );
 }
