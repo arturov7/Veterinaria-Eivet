@@ -26,7 +26,7 @@ class AdminLoginScreen extends StatefulWidget {
 
 class _LoginState extends State<AdminLoginScreen> {
   final form = GlobalKey<FormState>();
-  final email = TextEditingController(text: 'admin@eivet.demo');
+  final email = TextEditingController();
   final pass = TextEditingController(text: 'demo123');
   bool remember = true, reveal = false;
 
@@ -130,8 +130,10 @@ class _LoginState extends State<AdminLoginScreen> {
                   SizedBox(height: 7 * gapScale),
                   TextFormField(
                     controller: email,
+                    keyboardType: TextInputType.emailAddress,
+                    autocorrect: false,
                     style: TextStyle(
-                      color: AdminTheme.muted,
+                      color: AdminTheme.ink,
                       fontSize: 14 * scale,
                     ),
                     validator: AdminValidators.email,
@@ -143,6 +145,10 @@ class _LoginState extends State<AdminLoginScreen> {
                         minHeight: 36 * scale,
                       ),
                       hintText: 'admin@eivet.demo',
+                      hintStyle: TextStyle(
+                        color: AdminTheme.muted.withValues(alpha: .55),
+                        fontSize: 14 * scale,
+                      ),
                       border: _loginInputBorder,
                       enabledBorder: _loginInputBorder,
                       focusedBorder: _loginFocusedInputBorder,

@@ -24,9 +24,6 @@ class AdminSidebar extends StatelessWidget {
     'Mascotas',
     'Consultas e historial',
     'Vacunas y tratamientos',
-    'Especialidad Oncológica',
-    'Reportes',
-    'Configuración / Seguridad',
   ];
   static const icons = [
     Icons.dashboard_outlined,
@@ -35,9 +32,6 @@ class AdminSidebar extends StatelessWidget {
     Icons.pets_outlined,
     Icons.medical_information_outlined,
     Icons.vaccines_outlined,
-    Icons.biotech_outlined,
-    Icons.analytics_outlined,
-    Icons.shield_outlined,
   ];
 
   @override
