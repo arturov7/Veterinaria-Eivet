@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../models/movil/registro.dart';
 import '../../repositories/movil/registro_repository.dart';
 import 'pet_detail_screen.dart';
-import 'pet_form_screen.dart';
 
 class RecordsScreen extends StatefulWidget {
   const RecordsScreen({super.key, this.embedded = false, this.onBack});
@@ -53,48 +52,6 @@ class _RecordsScreenState extends State<RecordsScreen> {
         setState(() => _error = 'No se pudieron cargar las mascotas.');
     } finally {
       if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _openForm([Registro? pet]) async {
-    final changed = await Navigator.push<bool>(
-      context,
-      MaterialPageRoute<bool>(builder: (_) => PetFormScreen(initial: pet)),
-    );
-    if (changed == true) await _load();
-  }
-
-  Future<void> _delete(Registro pet) async {
-    if (pet.id == null) return;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Eliminar mascota'),
-        content: Text(
-          '¿Deseas eliminar a ${pet.titulo}? También se eliminarán sus datos relacionados.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancelar'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Eliminar'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !mounted) return;
-    try {
-      await context.read<RegistroRepository>().delete(pet.id!);
-      await _load();
-    } catch (_) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo eliminar la mascota.')),
-        );
-      }
     }
   }
 
@@ -152,26 +109,6 @@ class _RecordsScreenState extends State<RecordsScreen> {
                   iconSize: 21,
                 ),
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Material(
-                  color: _forest,
-                  shape: const CircleBorder(),
-                  child: InkWell(
-                    customBorder: const CircleBorder(),
-                    onTap: () => _openForm(),
-                    child: const SizedBox(
-                      width: 44,
-                      height: 44,
-                      child: Icon(
-                        Icons.add_rounded,
-                        color: Colors.white,
-                        size: 27,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),
@@ -179,7 +116,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
       const Padding(
         padding: EdgeInsets.fromLTRB(22, 3, 22, 15),
         child: Text(
-          'Registra y actualiza los datos de tus mascotas.',
+          'Consulta las mascotas registradas por el personal de EIVET.',
           style: TextStyle(color: Color(0xff65756f), fontSize: 14),
         ),
       ),
@@ -207,29 +144,6 @@ class _RecordsScreenState extends State<RecordsScreen> {
       ),
       const SizedBox(height: 8),
       Expanded(child: _body()),
-      Padding(
-        padding: const EdgeInsets.fromLTRB(22, 8, 22, 14),
-        child: SizedBox(
-          height: 56,
-          child: FilledButton.icon(
-            onPressed: () => _openForm(),
-            style: FilledButton.styleFrom(
-              backgroundColor: _emerald,
-              foregroundColor: Colors.white,
-              elevation: 2,
-              textStyle: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-            ),
-            icon: const Icon(Icons.add_rounded, size: 24),
-            label: const Text('Registrar mascota'),
-          ),
-        ),
-      ),
     ],
   );
 
@@ -264,7 +178,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
               child: Text(
                 searching
                     ? 'No encontramos mascotas con ese nombre.'
-                    : 'Aún no registraste mascotas.',
+                    : 'Aún no tienes mascotas registradas.',
                 style: const TextStyle(
                   color: Color(0xff52675e),
                   fontWeight: FontWeight.w600,
@@ -275,7 +189,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
               const SizedBox(height: 6),
               const Center(
                 child: Text(
-                  'Cuando registres una, aparecerá aquí.',
+                  'El personal de EIVET registrará tus mascotas para que aparezcan aquí.',
                   style: TextStyle(color: Color(0xff83948c), fontSize: 13),
                 ),
               ),
@@ -302,8 +216,6 @@ class _RecordsScreenState extends State<RecordsScreen> {
                 builder: (_) => PetDetailScreen(pet: pet),
               ),
             ),
-            onEdit: () => _openForm(pet),
-            onDelete: () => _delete(pet),
           );
         },
       ),
@@ -315,14 +227,10 @@ class _PetCard extends StatelessWidget {
   const _PetCard({
     required this.pet,
     required this.onOpen,
-    required this.onEdit,
-    required this.onDelete,
   });
 
   final Registro pet;
   final VoidCallback onOpen;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -395,21 +303,7 @@ class _PetCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    PopupMenuButton<String>(
-                      tooltip: 'Opciones de ${pet.titulo}',
-                      onSelected: (value) {
-                        if (value == 'editar') onEdit();
-                        if (value == 'eliminar') onDelete();
-                      },
-                      itemBuilder: (_) => const [
-                        PopupMenuItem(value: 'editar', child: Text('Editar')),
-                        PopupMenuItem(
-                          value: 'eliminar',
-                          child: Text('Eliminar'),
-                        ),
-                      ],
-                      icon: const Icon(Icons.more_vert_rounded),
-                    ),
+                    const Icon(Icons.chevron_right_rounded),
                   ],
                 ),
               ),

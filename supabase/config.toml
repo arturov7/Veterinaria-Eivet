@@ -2,3 +2,7 @@
 # Permite que el OPTIONS del navegador llegue a la función. El POST exige
 # igualmente un JWT válido y rol administrador dentro de index.ts.
 verify_jwt = false
+
+[functions.salud]
+# Endpoint público de estado; solo devuelve el estado de conectividad.
+verify_jwt = false

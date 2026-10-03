@@ -7,7 +7,6 @@ import '../../repositories/movil/appointment_repository.dart';
 import '../../repositories/movil/pet_care_repository.dart';
 import '../../repositories/movil/registro_repository.dart';
 import 'appointment_form_screen.dart';
-import 'pet_form_screen.dart';
 
 class PetDetailScreen extends StatefulWidget {
   const PetDetailScreen({super.key, required this.pet});
@@ -62,15 +61,6 @@ class _PetDetailScreenState extends State<PetDetailScreen>
     } finally {
       if (mounted) setState(() => _loading = false);
     }
-  }
-
-  Future<void> _edit() async {
-    final updated = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(
-        builder: (_) => PetFormScreen(initial: widget.pet),
-      ),
-    );
-    if (updated == true && mounted) Navigator.of(context).pop(true);
   }
 
   Future<void> _bookAppointment() async {
@@ -139,11 +129,9 @@ class _PetDetailScreenState extends State<PetDetailScreen>
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
-              if (value == 'edit') _edit();
               if (value == 'refresh') _load();
             },
             itemBuilder: (_) => const [
-              PopupMenuItem(value: 'edit', child: Text('Editar mascota')),
               PopupMenuItem(
                 value: 'refresh',
                 child: Text('Actualizar expediente'),
@@ -170,7 +158,7 @@ class _PetDetailScreenState extends State<PetDetailScreen>
                     child: ListView(
                       padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
                       children: [
-                        _PetHeader(pet: pet, onEdit: _edit),
+                        _PetHeader(pet: pet),
                         const SizedBox(height: 18),
                         TabBar(
                           controller: _tabs,
@@ -284,9 +272,8 @@ class _PetDetailScreenState extends State<PetDetailScreen>
 }
 
 class _PetHeader extends StatelessWidget {
-  const _PetHeader({required this.pet, required this.onEdit});
+  const _PetHeader({required this.pet});
   final Registro pet;
-  final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -376,11 +363,6 @@ class _PetHeader extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-          IconButton(
-            onPressed: onEdit,
-            tooltip: 'Editar mascota',
-            icon: const Icon(Icons.edit_outlined, color: Color(0xFF176246)),
           ),
         ],
       ),

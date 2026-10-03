@@ -118,7 +118,16 @@ class SupabaseAdminRepository implements AdminRepository {
       Owner.fromClientMap,
       'id,nombre,telefono,direccion,correo,created_at',
     );
-    return [...accounts, ...manual];
+    // El trigger de Auth también crea una fila en clientes para el personal.
+    // Esas cuentas no deben ofrecerse como propietarios de mascotas.
+    final staffRows = await _db.from('perfiles').select('id');
+    final staffIds = (staffRows as List)
+        .map((row) => (row as Map)['id']?.toString())
+        .toSet();
+    return [
+      ...accounts.where((account) => !staffIds.contains(account.id)),
+      ...manual,
+    ];
   }
   @override
   Future<void> createClientAccount(Owner v, String password) async {
@@ -170,6 +179,11 @@ class SupabaseAdminRepository implements AdminRepository {
   }
   @override
   Future<void> savePet(AdminPet v) async {
+    final linkedToClient = v.clientId != null && v.clientId!.isNotEmpty;
+    final linkedToManualOwner = v.ownerId.isNotEmpty;
+    if (linkedToClient == linkedToManualOwner) {
+      throw StateError('Selecciona una sola cuenta o ficha de propietario.');
+    }
     if (v.id == null) {
       await _db.from('mascotas').insert(v.toMap()).select('id').single();
     } else {

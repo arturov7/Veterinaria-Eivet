@@ -78,7 +78,7 @@ class AdminPet {
   }
   Map<String, dynamic> toMap() => {
     'propietario_id': ownerId.isEmpty ? null : ownerId,
-    'cliente_id': clientId,
+    'cliente_id': clientId == null || clientId!.isEmpty ? null : clientId,
     'nombre': name.trim(),
     'especie': species.trim(),
     'raza': breed.trim(),
