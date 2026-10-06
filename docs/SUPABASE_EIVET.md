@@ -19,6 +19,7 @@ Ejecuta los scripts SQL desde el editor SQL de Supabase en este orden:
 5. `supabase/09_TRATAMIENTOS_CLIENTES_RLS.sql`
 6. `supabase/10_CLIENTES_EN_PANEL.sql`
 7. `supabase/12_MASCOTAS_TITULAR_SOLO_PERSONAL.sql`
+8. `supabase/13_CITAS_RLS_PROPIETARIOS.sql`
 
 `supabase/04_DATOS_EJEMPLO_CUIDADOS.sql` es opcional y requiere un usuario y una mascota existentes. Las tablas esperadas son `clientes`, `mascotas`, `servicios`, `citas`, `vacunas`, `historiales_clinicos`, `notificaciones`, `perfiles`, `propietarios`, `consultas` y `tratamientos`. `perfiles` almacena el nombre, correo y rol del personal; las contraseñas permanecen en Supabase Auth.
 
@@ -27,6 +28,8 @@ Ejecuta los scripts SQL desde el editor SQL de Supabase en este orden:
 Una cuenta creada en **Authentication > Users** tiene un ID de Auth. El disparador `crear_cliente` crea su fila en `public.clientes` con ese mismo ID. La cuenta de un propietario puede iniciar sesión en la app móvil y sus mascotas se vinculan con `mascotas.cliente_id`. El script `10_CLIENTES_EN_PANEL.sql` agrega el correo a `clientes` y recupera las cuentas de Auth ya existentes. Como el disparador también crea filas para cuentas del personal, el panel excluye de **Clientes y propietarios** los IDs que aparecen en `public.perfiles`. Ejecuta el script en SQL Editor y recarga el panel web.
 
 El propietario puede **consultar** las mascotas vinculadas a su cuenta y solicitar citas. El registro, la edición y la eliminación de mascotas corresponden al personal autenticado con rol `administrador` o `veterinario` en `public.perfiles`. El script `12_MASCOTAS_TITULAR_SOLO_PERSONAL.sql` retira las políticas antiguas de escritura del propietario, conserva su lectura filtrada por `auth.uid()` y exige que cada mascota tenga exactamente un titular: `cliente_id` o `propietario_id`. Si hay filas sin titular o con dos titulares, la migración se detiene sin cambiar las políticas; primero hay que corregir esas filas. No basta con ocultar los botones en Flutter: aplica este script en el proyecto Supabase usado por la app.
+
+El script `13_CITAS_RLS_PROPIETARIOS.sql` protege las citas ante peticiones directas a PostgREST: además de comprobar `cliente_id`, exige que la cita apunte a una mascota de esa misma cuenta y que `propietario_id` esté vacío. Aplícalo también en Supabase; la validación de la app móvil por sí sola no protege la API.
 
 Para crear propietarios con acceso móvil desde la web, despliega la función `supabase/functions/crear-propietario/index.ts` en el mismo proyecto Supabase. Con Supabase CLI enlazada al proyecto: `supabase functions deploy crear-propietario`. La configuración `supabase/config.toml` permite que el navegador envíe `OPTIONS`; el `POST` sigue exigiendo dentro de la función un JWT válido y rol `administrador`. La función crea la cuenta en Supabase Auth y completa su perfil en `clientes`. Usa la clave de servicio **solo en el servidor**; Supabase la inyecta en la función. Si no se despliega, el formulario mostrará un error y no creará una ficha manual en su lugar. El correo queda confirmado al crear la cuenta, por lo que el propietario puede entrar en la app móvil con el correo y contraseña asignados.
 
@@ -50,6 +53,8 @@ where num_nonnulls(cliente_id, propietario_id) <> 1;
 ```
 
 La consulta debe devolver cero filas. Después de aplicar el script, comprueba las políticas activas con `select policyname, cmd from pg_policies where schemaname = 'public' and tablename = 'mascotas';`: `mascotas_propias` debe ser solo `SELECT`, y el CRUD del personal se realiza mediante `personal_mascotas`.
+
+Para comprobar el aislamiento entre dos propietarios ficticios, ejecuta `supabase/14_VERIFICAR_RLS_DOS_CUENTAS.sql` en SQL Editor después de reemplazar los cuatro UUID indicados. La prueba simula cada cuenta con el rol `authenticated`, comprueba que ve su mascota y no la ajena, y hace un intento de actualización sobre la mascota ajena dentro de una transacción que termina con `ROLLBACK`. El resultado esperado en ambos sentidos es `propia = 1`, `ajena = 0` y `filas_modificadas = 0`. La prueba de citas requiere al menos una cita ficticia para cada mascota; un conteo inicial de cero no demuestra aislamiento de citas. Guarda la fecha, los resultados observados y capturas sin datos personales como evidencia.
 
 Para diagnosticar la sincronización, ejecuta la consulta única `supabase/08_DIAGNOSTICO_VACUNAS_CITAS.sql`. Una mascota puede existir aunque no haya ninguna fila guardada en `vacunas` o `citas`. Si `citas_guardadas` es mayor que cero pero `citas_visibles_para_cliente` es cero, aplica primero `supabase/06_VINCULAR_CITAS_CLIENTES.sql`.
 

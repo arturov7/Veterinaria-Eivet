@@ -2,9 +2,18 @@
 
 Aplicación Flutter para móvil y web de gestión veterinaria, con Supabase como backend y base de datos.
 
+## Enlaces del proyecto
+
+- [Repositorio de código](https://github.com/arturov7/Veterinaria-Eivet)
+- [Tablero Kanban en GitHub Projects](https://github.com/users/arturov7/projects/2/views/1?layout=board) (el acceso depende de los permisos del proyecto).
+- [Panel web publicado en Netlify](https://eivetveterinaria.netlify.app/)
+- [Ruta de salud de Supabase](https://xbvjhrfgznljtwxghvka.supabase.co/functions/v1/salud)
+
+La ruta de salud respondió `200` con `{"status":"online"}` en la comprobación del 03/10/2026. La prueba automatizada `scripts/verify_salud.ps1` detectó una diferencia pendiente: la versión publicada acepta `POST` con `200`, aunque el código del repositorio exige `405`. Los resultados y límites de las demás pruebas constan en [docs/PRUEBAS_Y_EVIDENCIAS.md](docs/PRUEBAS_Y_EVIDENCIAS.md).
+
 ## Módulos
 
-- App móvil para clientes: autenticación, registro y gestión de mascotas, solicitudes de citas, consulta de cuidados clínicos, preferencias, ubicación, clima y mapa.
+- App móvil para propietarios: autenticación, consulta de sus mascotas y datos clínicos, solicitudes de citas, preferencias, ubicación, clima y mapa. El registro, la edición y la eliminación de mascotas corresponden al administrador y al veterinario.
 - Panel administrativo web: gestión de propietarios, mascotas, citas, consultas, tratamientos y vacunas.
 - Interfaces de referencia en `stitch_eivet_panel_administrativo_web/` y `stitch_veterinary_app_interface_design/`.
 
@@ -42,7 +51,25 @@ El proyecto contiene configuración Flutter para Android y Web. Para compilar An
 flutter build apk --release --dart-define-from-file=.env
 ```
 
+Para generar un APK solo para dispositivos ARM64:
+
+```bash
+flutter build apk --release --target-platform android-arm64 --dart-define-from-file=.env
+```
+
+El APK local existente no acredita una compilación de la revisión final ni una instalación en un dispositivo. Registra la revisión Git, la versión, la huella del archivo y la evidencia de instalación antes de distribuirlo.
+
 La carpeta `stitch_*` contiene diseños de interfaz de referencia y se conserva como parte del proyecto.
+
+La medición de la ruta pública de salud y su alcance están en [docs/RENDIMIENTO_PRODUCCION.md](docs/RENDIMIENTO_PRODUCCION.md). La versión de trabajo de la monografía E4 está en [Vedia_Salazar_Monografia_E4_adaptada.docx](Vedia_Salazar_Monografia_E4_adaptada.docx).
+
+## Pruebas locales
+
+```bash
+flutter test
+```
+
+La salida final de la suite aún debe registrarse con fecha. Los tests del modo demo no verifican RLS ni los flujos de producción. Los casos ejecutados y pendientes se distinguen en [docs/PRUEBAS_Y_EVIDENCIAS.md](docs/PRUEBAS_Y_EVIDENCIAS.md).
 
 ## Despliegue web en Netlify
 

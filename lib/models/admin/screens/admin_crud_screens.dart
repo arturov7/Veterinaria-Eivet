@@ -2058,7 +2058,7 @@ Future<void> _ownerDialog(
                       : null,
                 ),
                 const SizedBox(height: 12),
-                const Text('Esta cuenta podrá iniciar sesión en la app móvil y registrar sus mascotas y citas.'),
+                const Text('Esta cuenta podrá iniciar sesión en la app móvil, consultar las mascotas registradas por el personal y solicitar citas.'),
               ],
               if (saveError != null) ...[
                 const SizedBox(height: 12),

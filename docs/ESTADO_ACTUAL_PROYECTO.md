@@ -1,5 +1,7 @@
 ﻿# Estado actual del proyecto EIVET
 
+> Nota histórica (22/09/2026): este resumen describe una etapa anterior. Para el estado de entrega, consulte `README.md`, `docs/SUPABASE_EIVET.md` y `docs/PRUEBAS_Y_EVIDENCIAS.md`. El script `02_MASCOTAS_CRUD_RLS.sql` introdujo permisos antiguos de escritura del propietario; `12_MASCOTAS_TITULAR_SOLO_PERSONAL.sql` los retira y reserva el registro, la edición y la eliminación de mascotas al administrador y al veterinario. La aplicación efectiva de estas políticas en Supabase todavía debe verificarse.
+
 ## Backend y base de datos
 
 Supabase es el backend y la base de datos elegidos para el proyecto. La app inicializa Supabase con `APP_MODE=supabase`, `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY`, y usa Supabase Auth y repositorios para las funciones conectadas.
