@@ -9,7 +9,7 @@ Aplicación Flutter para móvil y web de gestión veterinaria, con Supabase como
 - [Panel web publicado en Netlify](https://eivetveterinaria.netlify.app/)
 - [Ruta de salud de Supabase](https://xbvjhrfgznljtwxghvka.supabase.co/functions/v1/salud)
 
-La ruta de salud respondió `200` con `{"status":"online"}` en la comprobación del 03/10/2026. La prueba automatizada `scripts/verify_salud.ps1` detectó una diferencia pendiente: la versión publicada acepta `POST` con `200`, aunque el código del repositorio exige `405`. Los resultados y límites de las demás pruebas constan en [docs/PRUEBAS_Y_EVIDENCIAS.md](docs/PRUEBAS_Y_EVIDENCIAS.md).
+La ruta de salud respondió `200` con `{"status":"online"}` en las comprobaciones del 03/10/2026 y 06/10/2026. La prueba automatizada `scripts/verify_salud.ps1` detectó una diferencia pendiente: la versión publicada acepta `POST` con `200`, aunque el código del repositorio exige `405`. Los resultados y límites de las demás pruebas constan en [docs/PRUEBAS_Y_EVIDENCIAS.md](docs/PRUEBAS_Y_EVIDENCIAS.md).
 
 ## Módulos
 
@@ -69,7 +69,7 @@ La medición de la ruta pública de salud y su alcance están en [docs/RENDIMIEN
 flutter test
 ```
 
-La salida final de la suite aún debe registrarse con fecha. Los tests del modo demo no verifican RLS ni los flujos de producción. Los casos ejecutados y pendientes se distinguen en [docs/PRUEBAS_Y_EVIDENCIAS.md](docs/PRUEBAS_Y_EVIDENCIAS.md).
+La suite local terminó con código de salida `0` el 06/10/2026: siete pruebas aprobadas. Consulta el [reporte completo](docs/evidencias/flutter_test_2026-10-06.txt). Estas pruebas cubren lógica demo y conversión de datos; no verifican RLS ni los flujos de producción. Los casos ejecutados y pendientes se distinguen en [docs/PRUEBAS_Y_EVIDENCIAS.md](docs/PRUEBAS_Y_EVIDENCIAS.md).
 
 ## Despliegue web en Netlify
 

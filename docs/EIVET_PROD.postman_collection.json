@@ -1,0 +1,970 @@
+{
+  "info": {
+    "name": "EIVET | Producción | Pruebas manuales (autoconfigurada)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Importar no ejecuta peticiones. Ejecutar cada caso manualmente. No usar Runner sobre toda la colección. No contiene claves, tokens ni resultados. Login A/B/veterinario guarda token y UID; PREP-V verifica rol; PREP-B0 verifica cliente B; PREP-B crea mascota ficticia B; PREP-C1 crea consulta ficticia y guarda sus IDs para PROD-06; PREP-C2 permite limpieza explícita. Las escrituras requieren habilitación y datos ficticios."
+  },
+  "item": [
+    {
+      "name": "00 | Salud y sesiones",
+      "item": [
+        {
+          "name": "PROD-01 GET salud",
+          "request": {
+            "method": "GET",
+            "url": "{{supabase_url}}/functions/v1/salud",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Pública. Código local: 200 online o 503 offline. Registrar resultado actual."
+          }
+        },
+        {
+          "name": "PROD-01b HEAD salud",
+          "request": {
+            "method": "HEAD",
+            "url": "{{supabase_url}}/functions/v1/salud",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Pública. Código local: 200 sin cuerpo cuando responde la RPC."
+          }
+        },
+        {
+          "name": "PROD-02 Sin autenticación",
+          "request": {
+            "method": "POST",
+            "url": "{{supabase_url}}/functions/v1/crear-propietario",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "No heredar Authorization. Código local: 401 con error Inicia sesión.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PROD-03A Login A",
+          "request": {
+            "method": "POST",
+            "url": "{{supabase_url}}/auth/v1/token?grant_type=password",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Guardar access_token y user.id en el entorno local. Ocultar respuesta en capturas.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{correo_propietario_a}}\",\"password\":\"{{password_propietario_a}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"token_propietario_a\", \"\");",
+                  "pm.environment.set(\"uid_propietario_a\", \"\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code !== 200) { throw new Error(\"Inicio de sesión no exitoso; no se guardó el token.\"); }",
+                  "const d = pm.response.json();",
+                  "if (!d || typeof d.access_token !== \"string\" || d.access_token.split(\".\").length !== 3 || !d.user || typeof d.user.id !== \"string\") { throw new Error(\"La respuesta no contiene access_token JWT y user.id válidos.\"); }",
+                  "pm.environment.set(\"token_propietario_a\", d.access_token);",
+                  "pm.environment.set(\"uid_propietario_a\", d.user.id);",
+                  "console.log(\"Sesión guardada en el entorno. No compartas ni captures el token.\");"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PROD-03B Login B",
+          "request": {
+            "method": "POST",
+            "url": "{{supabase_url}}/auth/v1/token?grant_type=password",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Guardar access_token y user.id en el entorno local.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{correo_propietario_b}}\",\"password\":\"{{password_propietario_b}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"token_propietario_b\", \"\");",
+                  "pm.environment.set(\"uid_propietario_b\", \"\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code !== 200) { throw new Error(\"Inicio de sesión no exitoso; no se guardó el token.\"); }",
+                  "const d = pm.response.json();",
+                  "if (!d || typeof d.access_token !== \"string\" || d.access_token.split(\".\").length !== 3 || !d.user || typeof d.user.id !== \"string\") { throw new Error(\"La respuesta no contiene access_token JWT y user.id válidos.\"); }",
+                  "pm.environment.set(\"token_propietario_b\", d.access_token);",
+                  "pm.environment.set(\"uid_propietario_b\", d.user.id);",
+                  "console.log(\"Sesión guardada en el entorno. No compartas ni captures el token.\");"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PROD-03V Login veterinario",
+          "request": {
+            "method": "POST",
+            "url": "{{supabase_url}}/auth/v1/token?grant_type=password",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Confirmar rol veterinario en perfiles.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{correo_veterinario}}\",\"password\":\"{{password_veterinario}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"token_veterinario\", \"\");",
+                  "pm.environment.set(\"uid_veterinario\", \"\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code !== 200) { throw new Error(\"Inicio de sesión no exitoso; no se guardó el token.\"); }",
+                  "const d = pm.response.json();",
+                  "if (!d || typeof d.access_token !== \"string\" || d.access_token.split(\".\").length !== 3 || !d.user || typeof d.user.id !== \"string\") { throw new Error(\"La respuesta no contiene access_token JWT y user.id válidos.\"); }",
+                  "pm.environment.set(\"token_veterinario\", d.access_token);",
+                  "pm.environment.set(\"uid_veterinario\", d.user.id);",
+                  "console.log(\"Sesión guardada en el entorno. No compartas ni captures el token.\");"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PREP-V Verificar rol veterinario",
+          "request": {
+            "method": "GET",
+            "url": "{{supabase_url}}/rest/v1/perfiles?select=id,rol&id=eq.{{uid_veterinario}}",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_veterinario}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Solo lectura. Debe devolver exactamente una fila con id igual a uid_veterinario y rol veterinario antes de PREP-B o PROD-07. Si [], no se comprobó el rol. Política local perfiles_personal; despliegue por verificar."
+          }
+        },
+        {
+          "name": "Identidad A",
+          "request": {
+            "method": "GET",
+            "url": "{{supabase_url}}/auth/v1/user",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_propietario_a}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Confirmar user.id de A; no compartir respuesta completa."
+          }
+        },
+        {
+          "name": "Identidad B",
+          "request": {
+            "method": "GET",
+            "url": "{{supabase_url}}/auth/v1/user",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_propietario_b}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Confirmar user.id de B."
+          }
+        }
+      ]
+    },
+    {
+      "name": "01 | Lecturas y RLS",
+      "item": [
+        {
+          "name": "PROD-04A Mascotas A",
+          "request": {
+            "method": "GET",
+            "url": "{{supabase_url}}/rest/v1/mascotas?select=id,cliente_id,nombre&cliente_id=eq.{{uid_propietario_a}}&order=nombre.asc",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_propietario_a}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Confirmar mascota ficticia A y guardar id como mascota_a_id."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"mascota_a_id\", \"\");",
+                  "if (pm.response.code !== 200) { throw new Error(\"Consulta de mascotas no exitosa; no se guardó ningún ID.\"); }",
+                  "const rows = pm.response.json();",
+                  "if (!Array.isArray(rows)) { throw new Error(\"La respuesta de mascotas no es una lista.\"); }",
+                  "const uid = pm.environment.get(\"uid_propietario_a\");",
+                  "if (rows.length !== 1 || !rows[0] || typeof rows[0].id !== \"string\" || rows[0].cliente_id !== uid) {",
+                  "  console.warn(\"No se guardó ID de mascota: se requiere exactamente una mascota propia visible. Si hay varias, elige una manualmente.\");",
+                  "} else {",
+                  "  pm.environment.set(\"mascota_a_id\", rows[0].id);",
+                  "  console.log(\"ID de mascota propia guardado en el entorno.\");",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PROD-04B Mascotas B",
+          "request": {
+            "method": "GET",
+            "url": "{{supabase_url}}/rest/v1/mascotas?select=id,cliente_id,nombre&cliente_id=eq.{{uid_propietario_b}}&order=nombre.asc",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_propietario_b}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Confirmar mascota ficticia B y guardar id como mascota_b_id."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"mascota_b_id\", \"\");",
+                  "if (pm.response.code !== 200) { throw new Error(\"Consulta de mascotas no exitosa; no se guardó ningún ID.\"); }",
+                  "const rows = pm.response.json();",
+                  "if (!Array.isArray(rows)) { throw new Error(\"La respuesta de mascotas no es una lista.\"); }",
+                  "const uid = pm.environment.get(\"uid_propietario_b\");",
+                  "if (rows.length !== 1 || !rows[0] || typeof rows[0].id !== \"string\" || rows[0].cliente_id !== uid) {",
+                  "  console.warn(\"No se guardó ID de mascota: se requiere exactamente una mascota propia visible. Si hay varias, elige una manualmente.\");",
+                  "} else {",
+                  "  pm.environment.set(\"mascota_b_id\", rows[0].id);",
+                  "  console.log(\"ID de mascota propia guardado en el entorno.\");",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PREP-B0 Verificar cliente B",
+          "request": {
+            "method": "GET",
+            "url": "{{supabase_url}}/rest/v1/clientes?select=id&id=eq.{{uid_propietario_b}}",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_propietario_b}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Solo lectura. Debe devolver exactamente la fila id=uid_propietario_b antes de crear una mascota B; la mascota referencia clientes(id)."
+          }
+        },
+        {
+          "name": "PROD-05A A consulta mascota B",
+          "request": {
+            "method": "GET",
+            "url": "{{supabase_url}}/rest/v1/mascotas?select=id,cliente_id,nombre&id=eq.{{mascota_b_id}}",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_propietario_a}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Antes, confirmar con B que la mascota B existe. RLS puede devolver 200 []. Criterio: no revelar datos ajenos."
+          }
+        },
+        {
+          "name": "PROD-05B B consulta mascota A",
+          "request": {
+            "method": "GET",
+            "url": "{{supabase_url}}/rest/v1/mascotas?select=id,cliente_id,nombre&id=eq.{{mascota_a_id}}",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_propietario_b}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Antes, confirmar con A que la mascota A existe. Criterio: no revelar datos ajenos."
+          }
+        },
+        {
+          "name": "PROD-06 Consulta clínica ficticia",
+          "request": {
+            "method": "GET",
+            "url": "{{supabase_url}}/rest/v1/consultas?select=id,mascota_id,fecha,motivo,diagnostico&mascota_id=eq.{{mascota_clinica_id}}",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_veterinario}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Solo para una consulta ficticia previa; no consultar datos clínicos reales."
+          }
+        },
+        {
+          "name": "PROD-08 Citas propias A",
+          "request": {
+            "method": "GET",
+            "url": "{{supabase_url}}/rest/v1/citas?select=id,cliente_id,mascota_id,fecha_hora,motivo,estado&cliente_id=eq.{{uid_propietario_a}}&order=fecha_hora.asc",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_propietario_a}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Registrar respuesta y tiempo. 200 [] solo demuestra estado vacío para este filtro."
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 | Escrituras manuales - NO usar Runner",
+      "description": "No ejecutar hasta confirmar cuentas, mascotas ficticias, RLS y limpieza. Activar SI en habilitar_escrituras y confirmar_datos_ficticios solo durante la prueba; después devolver a NO.",
+      "item": [
+        {
+          "name": "PREP-B Crear mascota ficticia B (personal)",
+          "request": {
+            "method": "POST",
+            "url": "{{supabase_url}}/rest/v1/mascotas",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_veterinario}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"cliente_id\":\"{{uid_propietario_b}}\",\"nombre\":\"Mascota B QA Postman\",\"especie\":\"perro\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Preparación para PROD-05 y PROD-11. Solo con B ficticio sin mascota, veterinario verificado, fila B en clientes y limpieza acordada. Código admin: savePet inserta en mascotas; política local personal_mascotas permite personal. El despliegue debe comprobarse. Verificar después con PROD-04B."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"habilitar_escrituras\") !== \"SI\" || pm.environment.get(\"confirmar_datos_ficticios\") !== \"SI\") { throw new Error(\"Escritura bloqueada: prepara datos ficticios y limpieza.\"); }",
+                  "if (!pm.environment.get(\"token_veterinario\")) { throw new Error(\"Falta token_veterinario\"); }",
+                  "if (!pm.environment.get(\"uid_propietario_b\")) { throw new Error(\"Falta uid_propietario_b\"); }",
+                  "if (pm.environment.get(\"mascota_b_id\")) { throw new Error(\"mascota_b_id ya tiene valor. Verifica si B ya tiene una mascota antes de crear otra.\"); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code !== 201 && pm.response.code !== 200) { console.warn(\"La mascota B no se creó; no se guardó su ID.\"); } else {",
+                  "  const rows = pm.response.json();",
+                  "  const uid = pm.environment.get(\"uid_propietario_b\");",
+                  "  if (Array.isArray(rows) && rows.length === 1 && rows[0] && typeof rows[0].id === \"string\" && rows[0].cliente_id === uid) {",
+                  "    pm.environment.set(\"mascota_b_id\", rows[0].id);",
+                  "    console.log(\"ID de mascota ficticia B guardado. Verifica la lectura con PROD-04B.\");",
+                  "  } else {",
+                  "    console.warn(\"La respuesta no identifica una única mascota del cliente B; verifica antes de guardar un ID manualmente.\");",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PREP-C1 Crear consulta clínica ficticia",
+          "request": {
+            "method": "POST",
+            "url": "{{supabase_url}}/rest/v1/consultas",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_veterinario}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Preparación para PROD-06. Solo con mascota B recién creada y ficticia, rol veterinario verificado y limpieza acordada. Código admin: saveRecord(consultas) inserta; política local personal_consultas permite personal. Despliegue por comprobar. Guarda consulta_clinica_id y mascota_clinica_id si crea una fila válida.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"mascota_id\":\"{{mascota_b_id}}\",\"motivo\":\"Consulta ficticia QA EIVET\",\"diagnostico\":\"Registro de prueba sin datos clínicos reales\",\"observaciones\":\"Prueba Postman EIVET; limpiar tras verificar\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"habilitar_escrituras\") !== \"SI\" || pm.environment.get(\"confirmar_datos_ficticios\") !== \"SI\") { throw new Error(\"Escritura bloqueada: prepara datos ficticios y limpieza.\"); }",
+                  "if (!pm.environment.get(\"token_veterinario\")) { throw new Error(\"Falta token_veterinario\"); }",
+                  "if (!pm.environment.get(\"mascota_b_id\")) { throw new Error(\"Falta mascota_b_id de la mascota ficticia B\"); }",
+                  "if (pm.environment.get(\"consulta_clinica_id\")) { throw new Error(\"consulta_clinica_id ya tiene valor. Verifica si ya existe una consulta de prueba.\"); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code !== 201 && pm.response.code !== 200) { console.warn(\"La consulta no se creó; no se guardaron IDs clínicos.\"); } else {",
+                  "  const rows = pm.response.json();",
+                  "  const pet = pm.environment.get(\"mascota_b_id\");",
+                  "  if (Array.isArray(rows) && rows.length === 1 && rows[0] && typeof rows[0].id === \"string\" && rows[0].mascota_id === pet && rows[0].motivo === \"Consulta ficticia QA EIVET\") {",
+                  "    pm.environment.set(\"consulta_clinica_id\", rows[0].id);",
+                  "    pm.environment.set(\"mascota_clinica_id\", pet);",
+                  "    console.log(\"Consulta ficticia guardada. Ejecuta PROD-06 para verificarla.\");",
+                  "  } else {",
+                  "    console.warn(\"La respuesta no identifica una única consulta de la mascota ficticia B; verifica antes de registrar IDs.\");",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PROD-07 Veterinario sin permiso",
+          "request": {
+            "method": "POST",
+            "url": "{{supabase_url}}/functions/v1/crear-propietario",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_veterinario}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Código local: 403 si no es administrador. Verificar que no se creó cuenta en Auth ni fila en clientes.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\":\"Propietario QA Rechazado\",\"correo\":\"{{correo_qa_rechazado}}\",\"contrasena\":\"{{password_qa_rechazado}}\",\"telefono\":\"\",\"direccion\":\"\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"habilitar_escrituras\") !== \"SI\" || pm.environment.get(\"confirmar_datos_ficticios\") !== \"SI\") { throw new Error(\"Escritura bloqueada: prepara datos ficticios y limpieza.\"); }",
+                  "if (!pm.environment.get(\"token_veterinario\")) { throw new Error(\"Falta token_veterinario\"); }",
+                  "if (!pm.environment.get(\"correo_qa_rechazado\")) { throw new Error(\"Falta correo_qa_rechazado\"); }",
+                  "if (!pm.environment.get(\"password_qa_rechazado\")) { throw new Error(\"Falta password_qa_rechazado\"); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PROD-09 Crear cita propia",
+          "request": {
+            "method": "POST",
+            "url": "{{supabase_url}}/rest/v1/citas",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_propietario_a}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Enviar una sola vez; confirmar misma identidad en token, cliente_id y mascota. Guardar id de respuesta como cita_a_id. Si hay 403, no se creó.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"mascota_id\":\"{{mascota_a_id}}\",\"fecha_hora\":\"{{fecha_cita_iso}}\",\"motivo\":\"Servicio: Consulta general\\nMotivo: Prueba ficticia QA EIVET\",\"estado\":\"Pendiente\",\"cliente_id\":\"{{uid_propietario_a}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"habilitar_escrituras\") !== \"SI\" || pm.environment.get(\"confirmar_datos_ficticios\") !== \"SI\") { throw new Error(\"Escritura bloqueada: prepara datos ficticios y limpieza.\"); }",
+                  "if (!pm.environment.get(\"token_propietario_a\")) { throw new Error(\"Falta token_propietario_a\"); }",
+                  "if (!pm.environment.get(\"uid_propietario_a\")) { throw new Error(\"Falta uid_propietario_a\"); }",
+                  "if (!pm.environment.get(\"mascota_a_id\")) { throw new Error(\"Falta mascota_a_id\"); }",
+                  "if (!pm.environment.get(\"fecha_cita_iso\")) { throw new Error(\"Falta fecha_cita_iso\"); }",
+                  "pm.environment.set(\"cita_a_id\", \"\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"cita_a_id\", \"\");",
+                  "if (pm.response.code !== 201 && pm.response.code !== 200) { console.warn(\"La cita no se creó; no se guardó cita_a_id.\"); } else {",
+                  "  const rows = pm.response.json();",
+                  "  const uid = pm.environment.get(\"uid_propietario_a\");",
+                  "  const pet = pm.environment.get(\"mascota_a_id\");",
+                  "  if (Array.isArray(rows) && rows.length === 1 && rows[0] && typeof rows[0].id === \"string\" && rows[0].cliente_id === uid && rows[0].mascota_id === pet) {",
+                  "    pm.environment.set(\"cita_a_id\", rows[0].id);",
+                  "    console.log(\"ID de cita ficticia guardado en el entorno.\");",
+                  "  } else {",
+                  "    console.warn(\"La respuesta no identifica una única cita propia; verifica la respuesta antes de guardar un ID manualmente.\");",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PROD-10 Cancelar cita propia",
+          "request": {
+            "method": "PATCH",
+            "url": "{{supabase_url}}/rest/v1/citas?id=eq.{{cita_a_id}}&cliente_id=eq.{{uid_propietario_a}}",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_propietario_a}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Solo con cita ficticia propia confirmada. Verificar por GET. La cancelación no borra la fila.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"estado\":\"Cancelada\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"habilitar_escrituras\") !== \"SI\" || pm.environment.get(\"confirmar_datos_ficticios\") !== \"SI\") { throw new Error(\"Escritura bloqueada: prepara datos ficticios y limpieza.\"); }",
+                  "if (!pm.environment.get(\"token_propietario_a\")) { throw new Error(\"Falta token_propietario_a\"); }",
+                  "if (!pm.environment.get(\"uid_propietario_a\")) { throw new Error(\"Falta uid_propietario_a\"); }",
+                  "if (!pm.environment.get(\"cita_a_id\")) { throw new Error(\"Falta cita_a_id\"); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PROD-11 A intenta modificar mascota B",
+          "request": {
+            "method": "PATCH",
+            "url": "{{supabase_url}}/rest/v1/mascotas?id=eq.{{mascota_b_id}}",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_propietario_a}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Solo con mascota B ficticia, nombre original anotado y personal capaz de restaurar si RLS falla. Comprobar después con B.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\":\"Mascota B QA intento ajeno\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"habilitar_escrituras\") !== \"SI\" || pm.environment.get(\"confirmar_datos_ficticios\") !== \"SI\") { throw new Error(\"Escritura bloqueada: prepara datos ficticios y limpieza.\"); }",
+                  "if (!pm.environment.get(\"token_propietario_a\")) { throw new Error(\"Falta token_propietario_a\"); }",
+                  "if (!pm.environment.get(\"mascota_b_id\")) { throw new Error(\"Falta mascota_b_id\"); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PREP-C2 Limpiar consulta clínica ficticia",
+          "request": {
+            "method": "DELETE",
+            "url": "{{supabase_url}}/rest/v1/consultas?id=eq.{{consulta_clinica_id}}&mascota_id=eq.{{mascota_clinica_id}}&motivo=eq.Consulta%20ficticia%20QA%20EIVET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{supabase_publishable_key}}"
+              },
+              {
+                "key": "Prefer",
+                "value": "return=representation"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_veterinario}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Limpieza opcional y explícita tras PROD-06. Solo eliminar la consulta creada por PREP-C1, tras comprobar que no tiene registros dependientes y que ambos IDs coinciden. Código admin: deleteRecord(consultas); política local personal_consultas permite personal. Verificar después con PROD-06."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.environment.get(\"habilitar_escrituras\") !== \"SI\" || pm.environment.get(\"confirmar_datos_ficticios\") !== \"SI\" || pm.environment.get(\"confirmar_limpieza_clinica\") !== \"SI\") { throw new Error(\"Limpieza bloqueada: confirma datos ficticios, ausencia de dependencias y los tres interruptores SI.\"); }",
+                  "if (!pm.environment.get(\"token_veterinario\")) { throw new Error(\"Falta token_veterinario\"); }",
+                  "if (!pm.environment.get(\"consulta_clinica_id\")) { throw new Error(\"Falta consulta_clinica_id de PREP-C1\"); }",
+                  "if (!pm.environment.get(\"mascota_clinica_id\")) { throw new Error(\"Falta mascota_clinica_id de PREP-C1\"); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code !== 200) { console.warn(\"Limpieza no confirmada; conserva consulta_clinica_id para verificar.\"); } else {",
+                  "  const rows = pm.response.json();",
+                  "  const expected = pm.environment.get(\"consulta_clinica_id\");",
+                  "  if (Array.isArray(rows) && rows.length === 1 && rows[0] && rows[0].id === expected) {",
+                  "    pm.environment.set(\"consulta_clinica_id\", \"\");",
+                  "    pm.environment.set(\"confirmar_limpieza_clinica\", \"NO\");",
+                  "    console.log(\"Se eliminó una única consulta ficticia. Verifica con PROD-06.\");",
+                  "  } else {",
+                  "    console.warn(\"La respuesta no confirma la eliminación de la única consulta ficticia esperada.\");",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

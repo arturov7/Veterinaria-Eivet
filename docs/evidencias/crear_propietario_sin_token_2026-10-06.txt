@@ -1,0 +1,12 @@
+EIVET - Prueba de producción de crear-propietario sin autenticación
+Fecha local: 2026-10-06T16:45:53-04:00 (America/La_Paz)
+URL: https://xbvjhrfgznljtwxghvka.supabase.co/functions/v1/crear-propietario
+Método: POST
+Content-Type: application/json
+Cuerpo: {}
+Authorization: ausente
+Esperado: HTTP 401; ninguna cuenta creada
+Observado: HTTP 401; {"error":"Inicia sesión."}
+Alcance: demuestra el rechazo de esta petición sin token. No demuestra el
+rechazo de un token inválido, el 403 del veterinario, la creación por el
+administrador ni el estado de RLS. El efecto sobre Auth/BD no se consultó.

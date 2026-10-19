@@ -1886,7 +1886,7 @@ class _Scaffold extends StatelessWidget {
   final String? error;
   final VoidCallback? onRefresh;
   @override
-  Widget build(BuildContext c) => Padding(
+  Widget build(BuildContext c) => SingleChildScrollView(
     padding: const EdgeInsets.all(22),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1937,23 +1937,23 @@ class _Scaffold extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 18),
-        Expanded(
-          child: loading
-              ? const LoadingWidget()
-              : rows.isEmpty
-              ? EmptyStateWidget(message: empty)
-              : SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columns: type == 'propietarios'
-                        ? const [
-                            DataColumn(label: Text('Nombre / origen')),
-                            DataColumn(label: Text('Teléfono')),
-                            DataColumn(label: Text('Correo')),
-                            DataColumn(label: Text('Dirección')),
-                            DataColumn(label: Text('Acciones')),
-                          ]
-                        : [
+        if (loading)
+          const SizedBox(height: 300, child: LoadingWidget())
+        else if (rows.isEmpty)
+          SizedBox(height: 300, child: EmptyStateWidget(message: empty))
+        else
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
+              columns: type == 'propietarios'
+                  ? const [
+                      DataColumn(label: Text('Nombre / origen')),
+                      DataColumn(label: Text('Teléfono')),
+                      DataColumn(label: Text('Correo')),
+                      DataColumn(label: Text('Dirección')),
+                      DataColumn(label: Text('Acciones')),
+                    ]
+                  : [
                       DataColumn(
                         label: Text(
                           type == 'mascotas' ? 'MASCOTA' : 'MASCOTA / NOMBRE',
@@ -1963,11 +1963,10 @@ class _Scaffold extends StatelessWidget {
                       DataColumn(label: Text('Fecha')),
                       DataColumn(label: Text('Estado')),
                       DataColumn(label: Text('Acciones')),
-                          ],
-                    rows: rows.toList(),
-                  ),
-                ),
-        ),
+                    ],
+              rows: rows.toList(),
+            ),
+          ),
       ],
     ),
   );

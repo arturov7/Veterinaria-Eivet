@@ -1,0 +1,17 @@
+EIVET - suite Flutter local
+Inicio: 2026-10-06T17:03:57-04:00
+Fin: 2026-10-06T17:04:08-04:00
+Comando: flutter test
+Código de salida: 0
+Alcance: pruebas locales; no acreditan RLS ni flujos de producción
+
+--- SALIDA ---
+00:00 +0: loading C:/Users/Arturo Vedia/Desktop/Modulo 3 Android/PROYECTO_FINAL_360_SESION2_FINAL/test/admin_demo_controller_test.dart
+00:00 +0: C:/Users/Arturo Vedia/Desktop/Modulo 3 Android/PROYECTO_FINAL_360_SESION2_FINAL/test/admin_demo_controller_test.dart: CRUD administrativo DEMO funciona
+00:00 +1: C:/Users/Arturo Vedia/Desktop/Modulo 3 Android/PROYECTO_FINAL_360_SESION2_FINAL/test/demo_repository_test.dart: modo demo muestra fichas de mascotas
+00:00 +2: C:/Users/Arturo Vedia/Desktop/Modulo 3 Android/PROYECTO_FINAL_360_SESION2_FINAL/test/demo_repository_test.dart: convierte datos de mascota a descripción consultable
+00:00 +3: C:/Users/Arturo Vedia/Desktop/Modulo 3 Android/PROYECTO_FINAL_360_SESION2_FINAL/test/demo_repository_test.dart: convierte la respuesta de NestJS a una ficha de consulta
+00:00 +4: C:/Users/Arturo Vedia/Desktop/Modulo 3 Android/PROYECTO_FINAL_360_SESION2_FINAL/test/weather_snapshot_test.dart: convierte JSON de Open-Meteo
+00:00 +5: C:/Users/Arturo Vedia/Desktop/Modulo 3 Android/PROYECTO_FINAL_360_SESION2_FINAL/test/demo_repository_test.dart: CRUD de solicitudes de citas funciona en modo demo
+00:02 +6: C:/Users/Arturo Vedia/Desktop/Modulo 3 Android/PROYECTO_FINAL_360_SESION2_FINAL/test/demo_repository_test.dart: modo demo ofrece cuidados sin requerir Supabase
+00:02 +7: All tests passed!

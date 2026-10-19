@@ -1,0 +1,11 @@
+EIVET - comprobación de ruta de salud publicada
+Inicio: 2026-10-06T17:04:41-04:00
+Fin: 2026-10-06T17:04:45-04:00
+Comando: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify_salud.ps1
+Código de salida: 1
+Nota: verificación de versión pública existente; no acredita sincronización ni despliegue nuevo
+
+--- SALIDA ---
+APROBADO GET: HTTP 200, esperado 200, respuesta {"status":"online"}
+APROBADO HEAD: HTTP 200, esperado 200, respuesta 
+FALLIDO POST: HTTP 200, esperado 405, respuesta {"status":"online"}
